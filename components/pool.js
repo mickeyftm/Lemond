@@ -349,25 +349,25 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                 </span>
                 <span>
                     <p>{formatAverageNumber(marketSize, 2)}</p>
-                    <p className={styles.sub_titles}>Market Size</p>
+                    <p className={styles.sub_titles}>{t('market_size')}</p>
                 </span>
                 <span>
                     <p>{formatAverageNumber(totalBorrow, 2)}</p>
-                    <p className={styles.sub_titles}>Total Borrowed</p>
+                    <p className={styles.sub_titles}>{t('total_borrowed')}</p>
                 </span>
                 <span>
                     <p>
                         <b className={styles.green}>↑</b>
                         {formatThousandNumber(totalSupplyAPY, 2)}%
                     </p>
-                    <p className={styles.sub_titles}>Deposit APY</p>
+                    <p className={styles.sub_titles}>{t('deposit_apy')}</p>
                 </span>
                 <span className={styles.border_right}>
                     <p>
                         {totalBorrowAPY > 0 ? <b className={styles.red}>↓</b> : <b className={styles.green}>↑</b>}
                         {formatThousandNumber(Math.abs(totalBorrowAPY), 2)}%
                     </p>
-                    <p className={styles.sub_titles}>Borrow APY</p>
+                    <p className={styles.sub_titles}>{t('borrow_apy')}</p>
                 </span>
                 <span>
                     <h4>
@@ -377,7 +377,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                         </s>
                         <s>{formatUSDNmuber(supplyBalance, 2)}</s>
                     </h4>
-                    <p className={styles.sub_titles}>Supply Balance</p>
+                    <p className={styles.sub_titles}>{t('supply_balance')}</p>
                 </span>
                 <span>
                     <h4>
@@ -387,7 +387,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                         </s>
                         <s>{formatUSDNmuber(borrowBalance, 2)}</s>
                     </h4>
-                    <p className={styles.sub_titles}>Borrow Balance</p>
+                    <p className={styles.sub_titles}>{t('borrow_balance')}</p>
                 </span>
 
                 <span className={cx(styles.none, styles.width_auto)}>
@@ -412,7 +412,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                         setSwitchSupply(true)
                                     }}
                                 >
-                                    SUPPLY
+                                    {t('supply')}
                                 </li>
                                 <li
                                     className={cx({ active: !switchSupply })}
@@ -420,7 +420,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                         setSwitchSupply(false)
                                     }}
                                 >
-                                    WITHDRAW
+                                    {t('withdraw')}
                                 </li>
                             </ul>
                             <div className={styles.enter_markets}>
@@ -439,11 +439,11 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                     }}
                                     checked={enterMarkets}
                                 />
-                                <p>As Collateral</p>
+                                <p>{t('as_collateral')}</p>
                             </div>
                             <div className={styles.content}>
                                 <div className={styles.inputAction}>
-                                    <h1>{switchSupply ? "Supply Amount" : "WITHDRAW Amount"}</h1>
+                                    <h1>{switchSupply ? t('supply_amount') : t('withdrew_amount')}</h1>
                                     <input type="text" placeholder="0" value={supplyValue} onChange={(e) => setSupplyValue(e.target.value)} />
                                     <button
                                         onClick={() => {
@@ -458,21 +458,22 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                                     value = supplyBalanceAmount
                                                 }
                                                 var supplyValues = parseFloat(value) > parseFloat(supplyBalanceAmount) ? supplyBalanceAmount : value
-                                                supplyValues = lToken.name == "OKT" ? formatDecimals(value, 18) : formatDecimals(value, 10)
+                                                console.log("brrow",supplyBalanceAmount,value.toString(), parseFloat(value) > parseFloat(supplyBalanceAmount))
+                                                supplyValues = lToken.name == "OKT" ? formatDecimals(supplyValues, 18) : formatDecimals(supplyValues, 10)
                                                 console.log("supplyValues", supplyValues)
                                                 setSupplyValue(supplyValues)
                                             }
                                         }}
                                     >
-                                        {switchSupply ? "MAX" : "SAFE MAX(80%)"}
+                                        {switchSupply ? t('max') : t('safe_max')}
                                     </button>
                                 </div>
                                 <div className={styles.info}>
-                                    <h1>Supply Rates</h1>
+                                    <h1>{t('supply_rates')}</h1>
                                     <ul>
                                         <li>
                                             <p>
-                                                <span>Supply APY</span>
+                                                <span>{t('supply_apy')}</span>
                                                 <span className={styles.num}>
                                                     <b className={styles.green}>↑</b>
                                                     {supplyApy}%
@@ -481,7 +482,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                         </li>
                                         <li>
                                             <p>
-                                                <span>Distribution APY</span>
+                                                <span>{t('distribution_apy')}</span>
                                                 <span className={styles.num}>
                                                     <b className={styles.green}>↑</b>
                                                     {supplyRewardAPY}%
@@ -496,7 +497,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                             <span className={styles.btns}>
                                 {!supplyEnable && switchSupply && (
                                     <button className={styles.green} onClick={() => tokenApprove()}>
-                                        ENABLE
+                                        {t('enable')}
                                     </button>
                                 )}
                                 {supplyEnable && switchSupply && (
@@ -508,13 +509,16 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                         onClick={() => mint()}
                                     >
                                         {parseFloat(supplyValue) > parseFloat(lToken.name == "OKT" ? formatStringNumber(tokenBalance, 18) : formatStringNumber(tokenBalance, 10))
-                                            ? "NO FUNDS AVAILABLE"
-                                            : "SUPPLY"}
+                                            ? t('no_funds_available')
+                                            : t('SUPPLY')
+                                            }
                                     </button>
                                 )}
                                 {!switchSupply && (
                                     <button disabled={supplyValue == 0 || parseFloat(supplyValue) > parseFloat(supplyBalanceAmount)} className={styles.green} onClick={() => redeem()}>
-                                        {parseFloat(supplyValue) > parseFloat(supplyBalanceAmount) ? "INSUFFICIENT LIQUIDITY" : "WITHDRAW"}
+                                        {
+                                            parseFloat(supplyValue) > parseFloat(supplyBalanceAmount) ? t('insufficient_liquidity') : t('withdrew')
+                                        }
                                     </button>
                                 )}
                             </span>
@@ -524,8 +528,8 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                     {!switchSupply && formatThousandNumber(supplyBalanceAmount, 8)} <b>{lToken.name}</b>
                                 </h1>
                                 <p>
-                                    {switchSupply && "Wallet Balance"}
-                                    {!switchSupply && "Currently Supplying"}
+                                    {switchSupply && t('wallet_balance')}
+                                    {!switchSupply && t('currently_supplying')}
                                 </p>
                             </span>
                         </div>
@@ -544,7 +548,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                         setSwitchBorrow(true)
                                     }}
                                 >
-                                    BORROW
+                                    { t('borrow')}
                                 </li>
                                 <li
                                     className={cx({ active: !switchBorrow })}
@@ -552,22 +556,29 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                         setSwitchBorrow(false)
                                     }}
                                 >
-                                    REPAY
+                                    { t('repay')}
                                 </li>
                             </ul>
                             <div className={styles.content}>
                                 <div className={styles.inputAction}>
-                                    <h1>{switchBorrow ? "BORROW Amount" : "REPAY Amount"}</h1>
+                                    <h1>{switchBorrow ? t('borrow_amount') :t('repay_amount') }</h1>
                                     <input type="text" placeholder="0" value={borrowValue} onChange={(e) => setBorrowValue(e.target.value)} />
                                     <button
                                         onClick={() => {
                                             if (checkWallet()) return
                                             if (switchBorrow) {
                                                 var value = new BigNumber(borrowLimit)
+                                                    .times(0.8)
                                                     .minus(borrow)
                                                     .div(new BigNumber(tokenPrice).div(new BigNumber(10).pow(18)))
-                                                    .times(0.8)
+                                                value = value <= 0 ? 0 :  value
+                                                console.log("borrowLimit",borrowLimit, "value", value)
                                                 console.log("switchBorrow", new BigNumber(borrowLimit).minus(borrow).toString())
+                                                const remainingValue = marketSize - totalBorrow
+                                                if(value > remainingValue){
+                                                    value = new BigNumber(remainingValue).times(0.8)
+                                                }
+                                                console.log("borrowLimit",borrowLimit, "value", value,"remainingValue",remainingValue)
                                                 value = lToken.name == "OKT" ? formatDecimals(value, 18) : formatDecimals(value, 10)
                                                 setBorrowValue(value)
                                             } else {
@@ -575,15 +586,17 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                             }
                                         }}
                                     >
-                                        {switchBorrow ? "SAFE MAX(80%)" : "MAX"}
+                                        {
+                                            switchBorrow ? t('safe_max') : t('max')
+                                        }
                                     </button>
                                 </div>
                                 <div className={styles.info}>
-                                    <h1>Borrow Rates</h1>
+                                    <h1>{t('borrow_rates')}</h1>
                                     <ul>
                                         <li>
                                             <p>
-                                                <span>Borrow APY</span>
+                                                <span>{t('borrow_apy')}</span>
                                                 <span className={styles.num}>
                                                     <b className={styles.red}>↓</b>
                                                     {borrowApy}%
@@ -592,7 +605,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                         </li>
                                         <li>
                                             <p>
-                                                <span>Distribution APY</span>
+                                                <span>{t('distribution_apy')}</span>
                                                 <span className={styles.num}>
                                                     <b className={styles.green}>↑</b>
                                                     {borrowRewardAPY}%
@@ -607,7 +620,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                             <span className={cx(styles.btns, styles.fr)}>
                                 {!borrowEnable && !switchBorrow && (
                                     <button className={styles.green} onClick={() => lTokenApprove()}>
-                                        ENABLE
+                                        {t('enable')}
                                     </button>
                                 )}
                                 {switchBorrow && (
@@ -620,13 +633,13 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                         onClick={() => borrows()}
                                     >
                                         {parseFloat(borrowValue) > parseFloat(new BigNumber(borrowLimit).minus(borrow).div(new BigNumber(tokenPrice).div(new BigNumber(10).pow(18))))
-                                            ? "INSUFFICIENT COLLATERAL"
-                                            : "BORROW"}
+                                            ? t('insufficient_collateral')
+                                            : t('borrow')}
                                     </button>
                                 )}
                                 {borrowEnable && !switchBorrow && (
                                     <button disabled={borrowValue == 0 || parseFloat(borrowValue) > parseFloat(borrowBalanceAmount)} className={styles.green} onClick={() => repay()}>
-                                        {parseFloat(borrowValue) > parseFloat(borrowBalanceAmount) ? "NO FUNDS AVAILABLE" : "REPAY"}
+                                        {parseFloat(borrowValue) > parseFloat(borrowBalanceAmount) ? t('no_funds_available') :t('repay') }
                                     </button>
                                 )}
                             </span>
@@ -636,8 +649,8 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                     {!switchBorrow && (lToken.name == "OKT" ? formatNumber(tokenBalance, 18, 8) : formatNumber(tokenBalance, 10, 8))} <b>{lToken.name}</b>
                                 </h1>
                                 <p>
-                                    {switchBorrow && "Currently Borrowing"}
-                                    {!switchBorrow && "Wallet Balance"}
+                                    {switchBorrow && t('currently_borrowing')}
+                                    {!switchBorrow && t('wallet_balance')}
                                 </p>
                             </span>
                         </div>
@@ -646,11 +659,11 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                 <span className={styles.borrow_limit}>
                     <span className={styles.item}>
                         <h1>{formatUSDNmuber(borrow, 4)}</h1>
-                        <p>Borrow Limit</p>
+                        <p>{t('borrow_limit_used')}</p>
                     </span>
                     <span className={styles.item}>
                         <h1>{formatUSDNmuber(borrowLimit, 4)}</h1>
-                        <p>Borrow Limit Used</p>
+                        <p>{t('borrow_limit')}</p>
                     </span>
                     <span className={styles.bar}>
                         <i className={styles.inner} style={{ width: `${borrowRate}%` }}></i>

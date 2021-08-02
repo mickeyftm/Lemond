@@ -182,14 +182,22 @@
                     height: 100%;
                     .line_light {
                         width: 100%;
-                        background: #f5ba5d;
-                        animation-timing-function: ease-in-out;
-                        animation-name: shine;
-                        animation-duration: 1.5s;
-                        animation-iteration-count: infinite;
-                        animation-direction: alternate;
+                        // animation-timing-function: ease-in-out;
+                        // animation-name: shine;
+                        // animation-duration: 1.5s;
+                        // animation-iteration-count: infinite;
+                        // animation-direction: alternate;
                         height: 100%;
                         display: block;
+                        &.green{
+                            background: #78ff78;
+                        }
+                        &.orange {
+                            background: #f5ba5d;
+                        }
+                        &.red {
+                            background: #ff0707;
+                        }
                     }
                     i {
                         background: url(../public/img/lemond.svg) no-repeat center #2a2f36;
@@ -288,6 +296,7 @@
             text-align: center;
             border-bottom-left-radius: 3px;
             font-style: normal;
+            font-weight: bold;
         }
         span.pool {
             display: flex;
@@ -779,6 +788,7 @@
                         background: none;
                         border: none;
                         color: #fff;
+                        width: 70%;
                     }
                     button {
                         font-size: 18px;
@@ -1084,12 +1094,12 @@
 @keyframes shine {
     0% {
         opacity: 0.4;
-        box-shadow: 0 0px 2px rgba(252, 221, 44, 0.4), 0 0px 1px rgba(184, 163, 70, 0.4);
+        box-shadow: 0 0px 2px rgba(255, 255, 255, 0.4), 0 0px 1px rgba(255, 255, 255, 0.4);
     }
 
     100% {
         opacity: 1;
-        box-shadow: 0 0px 3px #f7c41f, 0 0px 3px #e9d51f;
+        box-shadow: 0 0px 3px #ffffffb4, 0 0px 3px rgba(255, 255, 255, 0.699);
     }
 }
 

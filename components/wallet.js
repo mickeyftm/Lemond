@@ -22,6 +22,8 @@ const WalletMask = (props) => {
     const { connectWallet } = props
     const { t } = props
 
+    console.log("翻译", t('connect-metamask'))
+
     return (<>
         <button className={styles.button} onClick={() => showWallet(false)}>{t('connect-wallet')}</button>
         <div onClick={() => showWallet(true)} className={cx(styles.walletMask, { hide: isHideWallet })} >
@@ -96,7 +98,7 @@ const Wallet = ({t}) => {
         {wallet.account && (<span className={styles.account}>{formatAddress(wallet.account)}</span>)}
 
         {wallet.account && (
-            <span className={styles.balance}> {wallet.balance === '-1' ? '...' : `${parseFloat(ethersUtils.formatEther(wallet.balance)).toFixed(2)} BNB`} </span>
+            <span className={styles.balance}> {wallet.balance === '-1' ? '...' : `${parseFloat(ethersUtils.formatEther(wallet.balance)).toFixed(2)} OKT`} </span>
         )}
 
         {(() => {
@@ -125,7 +127,6 @@ const Wallet = ({t}) => {
             )
         })()}
 
-
         {/* {wallet.account && (
             <p>
                 <span>Block:</span> <span>{blockNumber || '…'}</span>
@@ -134,4 +135,4 @@ const Wallet = ({t}) => {
     </div>
 }
 
-export default withTranslation('header')(Wallet)
+export default withTranslation('home')(Wallet)

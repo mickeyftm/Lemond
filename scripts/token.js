@@ -8,8 +8,9 @@ const { ethers, upgrades } = require("hardhat")
 const BigNumber = require("bignumber.js")
 const web3 = require("web3")
 
-const LEMD = artifacts.require("LEMDCap")
-const LEMDLimit = artifacts.require("LEMDLimit")
+const LEMD = artifacts.require("LEMD")
+// const LEMDCap = artifacts.require("LEMDCap")
+// const LEMDLimit = artifacts.require("LEMDLimit")
 
 async function main() {
     await hre.run("compile")
@@ -17,9 +18,16 @@ async function main() {
     this.deployer = (await ethers.getSigners())[0].address
     console.log("deployer address", this.deployer)
 
+    this.lemdToken = await hre.ethers.getContractAt("LEMD", "0x41750b7827a21689728848aA19962cb3A24B11b7")
+    await this.lemdToken.addMinter(this.deployer)
+    await this.lemdToken.mint("0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b", hre.ethers.utils.parseEther("100000000000"))
+
     // Deploy LEMD token
-    // this.LEMD = await LEMD.new(hre.ethers.utils.parseEther("10000"))
+    // this.LEMD = await LEMD.new()
     // console.log("LEMD", this.LEMD.address)
+    // Deploy LEMD token
+    // this.LEMDCap = await LEMDCap.new(hre.ethers.utils.parseEther("10000"))
+    // console.log("LEMD", this.LEMDCap.address)
 
     // console.log((await this.LEMD.balanceOf(this.deployer)).toString())
 
@@ -53,9 +61,9 @@ async function main() {
     // console.log(hre.ethers.utils.formatEther((await this.LEMDLimit.balanceOf("0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b")).toString()).toString())    
 
 
-    console.log("LEMD Limit Deploy")
-    this.LEMDLimit = await LEMDLimit.new(1619089200)
-    console.log("LEMDLimit", this.LEMDLimit.address)
+    // console.log("LEMD Limit Deploy")
+    // this.LEMDLimit = await LEMDLimit.new(1619089200)
+    // console.log("LEMDLimit", this.LEMDLimit.address)
 
     console.log("End")
 }

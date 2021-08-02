@@ -20,17 +20,35 @@ const Home = ({ t, router }) => {
     const wallet = useWallet()
     const { account, ethereum } = wallet
     const [lemdPrice, setLemdPrice] = useState(1)
-    const [poolDate, setPoolDate] = useState([{}, {}, {}, {}, {}])
+    const [poolDate, setPoolDate] = useState([{}, {}, {}, {}, {}, {}, {}, {}])
     const [supplyBalance, setSupplyBalance] = useState(0)
     const [borrowBalance, setBorrowBalance] = useState(0)
     const [borrowBalanceLimit, setBorrowBalanceLimit] = useState(0)
     const [borrowRate, setBorrowRate] = useState(0)
     const [pendingLemd, setPendingLemd] = useState(0)
-    const [poolInfo, setPoolInfo] = useState([{},{},{},{},{}])
+    const [poolInfo, setPoolInfo] = useState([{}, {}, {}, {}, {}, {}, {}, {}])
 
     const web3 = new Web3(ethereum)
-    const { OKT, OKB, USDT, ETHK, BTCK } = tokenConfig.lend.tokens
-    const { lEther, lOKB, lUSDT, lETHK, lBTCK } = tokenConfig.lend.lTokens
+    const {
+        OKT,
+        OKB,
+        USDT,
+        ETHK,
+        BTCK,
+        DAIK,
+        USDC,
+        UNIK
+    } = tokenConfig.lend.tokens
+    const {
+        lEther,
+        lOKB,
+        lUSDT,
+        lETHK,
+        lBTCK,
+        lDAIK,
+        lUSDC,
+        lUNIK
+    } = tokenConfig.lend.lTokens
     const { lemdDistribution } = tokenConfig.lend.controller
     const lemdDistributionContract = new web3.eth.Contract(lemdDistribution.abi, lemdDistribution.address)
 
@@ -153,7 +171,7 @@ const Home = ({ t, router }) => {
                     <div className={styles.lend_line}>
                         <div className={styles.line}>
                             <i className={styles.inner} style={{ width: `${borrowRate}%` }}>
-                                <span className={styles.line_light}></span>
+                                <span className={cx(styles.line_light, { green: borrowRate < 60 }, { orange: borrowRate < 80 && borrowRate >= 60 }, { red: borrowRate <= 100 && borrowRate >= 80 })}></span>
                                 <i />
                             </i>
                         </div>
@@ -218,6 +236,39 @@ const Home = ({ t, router }) => {
                         borrowRate={borrowRate}
                         updateDate={(data) => updatePoolDate(data, 4)}
                     />
+                    {/* <Pool
+                        router={router}
+                        lemdPrice={lemdPrice}
+                        info={poolInfo[5]}
+                        token={DAIK}
+                        lToken={lDAIK}
+                        borrow={borrowBalance}
+                        borrowLimit={borrowBalanceLimit}
+                        borrowRate={borrowRate}
+                        updateDate={(data) => updatePoolDate(data, 5)}
+                    />
+                    <Pool
+                        router={router}
+                        lemdPrice={lemdPrice}
+                        info={poolInfo[4]}
+                        token={USDC}
+                        lToken={lUSDC}
+                        borrow={borrowBalance}
+                        borrowLimit={borrowBalanceLimit}
+                        borrowRate={borrowRate}
+                        updateDate={(data) => updatePoolDate(data, 6)}
+                    />
+                    <Pool
+                        router={router}
+                        lemdPrice={lemdPrice}
+                        info={poolInfo[4]}
+                        token={UNIK}
+                        lToken={lUNIK}
+                        borrow={borrowBalance}
+                        borrowLimit={borrowBalanceLimit}
+                        borrowRate={borrowRate}
+                        updateDate={(data) => updatePoolDate(data, 7)}
+                    /> */}
                 </ul>
             </div>
         </HeaderFooter>

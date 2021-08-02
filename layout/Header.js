@@ -6,7 +6,7 @@ import Locales from '../components/locales'
 import classNames from "classnames/bind"
 const cx = classNames.bind(styles)
 
-const Header = (props) => {
+const Header = (props,t) => {
     const { activeIndex } = props
     const [toggleNav, setToggleNav] = useState(true)
 
@@ -16,7 +16,6 @@ const Header = (props) => {
 
     const initNetWork = async () => {
         let ethereum = window.ethereum
-       
         const data = [
             {
                 // chainId: "0x61",
@@ -63,6 +62,7 @@ const Header = (props) => {
                     </ul>
                 </div>
                 <i className={styles.toggle} onClick={() => setToggleNav(!toggleNav)}></i>
+                <Locales / >
                 <Wallet />
             </div>
             {props.children}

@@ -1,13 +1,16 @@
 {
-  "title": "Factory - DOMO - DEFI and More",
-  "half-countdown": "减半倒计时",
-  "farm-tips1": "把“零件”们放入矿池来”组装“DOMO",
-  "farm-tips2": "一定记得好好保管DOMO，它将是参与后面模式的重要物品",
-  "farm-production": "已挖出的DOMO",
-  "farm-supply": "总供给",
-  "farm-lock": "锁定总价值",
-  "farm-address": "DOMO合约",
-  "farm-balance": "我的DOMO余额",
-  "farm-pending": "待收获DOMO",
-  "farm-price": "DOMO价格:"
+  "title": "Factory",
+  "LEMD_Genesis_Mining":"柠檬借贷创世纪矿业",
+  "info":"让你的柠檬盒子装满多汁的每年收率。",
+  "Total_Value_Locked":"锁定的总值",
+  "Tanked_up":"灌满",
+  "now":"马上",
+  "Store_goods_in_Lemond_box":"把货物放在柠檬盒子里",
+  "Staked":"质押",
+  "tokens":"代币",
+  "unclaimed":"未领取的",
+  "in_pool":"在这个池子里",
+  "claim":"领取",
+  "max":"最大",
+  "withdraw":"停止提供"
 }

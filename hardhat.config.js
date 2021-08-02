@@ -33,6 +33,11 @@ module.exports = {
         hardhat: {
             allowUnlimitedContractSize: true,
         },
+        ok: {
+            url: "https://exchainrpc.okex.org",
+            accounts: [mnemonic],
+            timeout: 30000,
+        },
         okexchain: {
             url: "https://exchaintestrpc.okex.org",
             accounts: [mnemonic],

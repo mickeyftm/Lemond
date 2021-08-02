@@ -47,12 +47,12 @@ const Home = ({ t,router }) => {
           <div className={styles.wrapper}>
               <div className={styles.across_chain}>
                   <div className={styles.content}>
-                      <h1>Enable your LEMD to flow between chains.</h1>
+                      <h1>{t("cc_title")}</h1>
                       <div className={styles.swap}>
                           {/* <div className={styles.cover}>
                               Coming Soon.
                           </div> */}
-                          <h2>Current participating users</h2>
+                          <h2>{t("Current_participating_users")}</h2>
                           <div className={styles.box}>
                               <i className={styles.icon_swap}></i>
                               <ul>
@@ -69,9 +69,9 @@ const Home = ({ t,router }) => {
                           <div className={styles.balance}>
                               <div className={styles.balance_content}>
                                   <span className={styles.num}>0.00</span>
-                                  <span>Wallet balance</span>
+                                  <span>{t("wallet_balance")}</span>
                               </div>
-                              <button disabled>Coming Soon</button>
+                              <button disabled>{t("coming_soon")}</button>
                           </div>
                       </div>
                   </div>

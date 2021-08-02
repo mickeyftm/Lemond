@@ -77,14 +77,13 @@ const Home = ({ t }) => {
           </Head>
           <div className={styles.wrapper}>
               <div className={styles.content}>
-                  <h1>About</h1>
+                  <h1>{t("about")}</h1>
 
                   <p>
-                      Lemond is a Protocol initialized on OKExChain with lower gas cost and higher efficiency. Besides the basic loan function, Lemond would bring more in the following steps, all is
-                      aiming for a Juicy DeFi environment.
+                    {t("about_info")}
                   </p>
 
-                  <h1>Audit Report</h1>
+                  <h1>{t("audit_report")}</h1>
 
                   <p>
                       <a href="https://github.com/Lemond-finance/doc/blob/main/Smart%20Contract%20Security%20Audit%20Report%20-%20LEMD.pdf" target="_blank">
@@ -92,46 +91,43 @@ const Home = ({ t }) => {
                       </a>
                   </p>
 
-                  <h1>Tokenomics</h1>
+                  <h1>{t("tokenomics")}</h1>
 
                   <p>
-                      Token: LEMD
+                      {t("tokens")}: LEMD
                       <br />
                       Total Supply: <b>1,000,000,000</b>
                       <br />
                       <button onClick={() => addLEMDtoWallet()}>Add LEMD to Wallet</button>
                       <br />
                       <br />
-                      <b>60%</b> Loan Mining + Liquidity Mining
+                      <b>60%</b> {t("Loan_Mining")} + {t("Liquidity_Mining")}
                       <br />
-                      <b>15%</b> DAO Governance
+                      <b>15%</b> {t("DAO_Governance")}
                       <br />
-                      <b>10%</b> Strategic Investment
+                      <b>10%</b> {t("Strategic_Investment")}
                       <br />
-                      <b>5%</b> Seed Round Investment
+                      <b>5%</b> {t("Seed_Round_Investment")}
                       <br />
-                      <b>3%</b> Team Incentive
+                      <b>3%</b> {t("Team_Incentive")}
                       <br />
-                      <b>2%</b> Advisor
+                      <b>2%</b> {t("Advisor")}
                       <br />
-                      <b>1%</b> Public Circulation on Exchange
+                      <b>1%</b> {t("Public_Circulation")}
                       <br />
-                      <b>4%</b> Eco-incentive + Initial Liquidity
+                      <b>4%</b> {t("Eco-incentive")} + {t("Initial_Liquidity")}
                   </p>
 
                   <p>
-                      LEMD Token Contract: <b>0xE667d8bD182D165D2E71cF72315bD117f6940094</b>
+                      LEMD{t("Token_Contract")}: <b>0x148A059Ccc356Df25195155Ce32008B42B50094F</b>
                   </p>
 
                   <p>
-                      Lemond is a decentralized, open-source, autonomous non-custodial liquidity market protocol where users can participate as depositors or borrowers. Depositors provide liquidity to
-                      the market to earn a passive income, while borrowers are able to borrow in an overcollateralized (perpetually) or undercollateralized (one-block liquidity) fashion.
+                      {t("about_info_1")}
                   </p>
 
                   <p>
-                      Each asset supported by the Lemond Protocol is integrated through a lToken contract, which is an EIP-20 compliant representation of balances supplied to the protocol. By minting
-                      lTokens, users (1) earn interest through the lToken's exchange rate, which increases in value relative to the underlying asset, and (2) gain the ability to use lTokens as
-                      collateral.
+                    {t("about_info_2")}
                   </p>
               </div>
           </div>

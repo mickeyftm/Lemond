@@ -80,8 +80,26 @@ export async function getLendInfo(req, res) {
 
 export async function updateLendTotalInfo(req,res) {
     try {
-        const { OKT, OKB, USDT, ETHK, BTCK } = tokenConfig.lend.tokens
-        const { lEther, lOKB, lUSDT, lETHK, lBTCK } = tokenConfig.lend.lTokens
+        const {
+            OKT,
+            OKB,
+            USDT,
+            ETHK,
+            BTCK,
+            DAIK,
+            USDC,
+            UNIK
+        } = tokenConfig.lend.tokens
+        const {
+            lEther,
+            lOKB,
+            lUSDT,
+            lETHK,
+            lBTCK,
+            lDAIK,
+            lUSDC,
+            lUNIK
+        } = tokenConfig.lend.lTokens
         const { lemdDistribution } = tokenConfig.lend.controller
         const { data } = await getPrice()
         await getLendInfoFromToken(OKT.abi, OKT.address, lEther.abi, lEther.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data?.okexchain?.usd, "")
@@ -89,6 +107,9 @@ export async function updateLendTotalInfo(req,res) {
         await getLendInfoFromToken(USDT.abi, USDT.address, lUSDT.abi, lUSDT.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data?.tether?.usd, "")
         await getLendInfoFromToken(ETHK.abi, ETHK.address, lETHK.abi, lETHK.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data?.ethereum?.usd, "")
         await getLendInfoFromToken(BTCK.abi, BTCK.address, lBTCK.abi, lBTCK.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data?.bitcoin?.usd, "")
+        // await getLendInfoFromToken(DAIK.abi, DAIK.address, lDAIK.abi, lDAIK.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data?.dai?.usd, "")
+        // await getLendInfoFromToken(USDC.abi, USDC.address, lUSDC.abi, lUSDC.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data['usd-coin']['usd'], "")
+        // await getLendInfoFromToken(UNIK.abi, UNIK.address, lUNIK.abi, lUNIK.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data?.uniswap?.usd, "")
         let callBackData = {
             message: "Success",
             data: null,

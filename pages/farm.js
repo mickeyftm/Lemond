@@ -36,13 +36,11 @@ const Home = ({ t,router }) => {
   const [invitedNum,setInvitedNum] = useState(0)
 
   const web3 = new Web3(ethereum)
-  const poolConfig = tokenConfig.pool.okt_pool
-  const lemondConfig = tokenConfig.token.lemond
-  const oktConfig = tokenConfig.stake.okt
+  const poolConfig = tokenConfig.lend.controller.lemdBreeder
   const lpConfig = tokenConfig.stake.lp
-  const lemondContract = new web3.eth.Contract(
-    lemondConfig.abi,
-    lemondConfig.address
+  const lpContract = new web3.eth.Contract(
+    lpConfig.abi,
+    lpConfig.address
   )
   const poolContract = new web3.eth.Contract(
     poolConfig.abi,
@@ -52,26 +50,20 @@ const Home = ({ t,router }) => {
   useEffect(() => {
     const timer = setInterval(async () => {
       if (account) {
-        const startTime = await poolContract.methods.starttime().call()
-        console.log('startTime',(new Date().getTime()/1000),startTime,(new Date().getTime()/1000) > startTime)
-        if((new Date().getTime()/1000) > startTime){
+        const startTime = await poolContract.methods.startBlock().call()
+        console.log('startTime',startTime)
+          const userInfo = await poolContract.methods.userInfo(0, account).call()
+          const poolLength = await poolContract.methods.poolLength().call()
+          const usersLength = await poolContract.methods.usersLength(0).call()
+          const pendingLemd = userInfo['pendingReward']
+          const stakeNum = userInfo['amount']
+          const unStakeNum = await lpContract.methods.balanceOf(account).call()
+          console.log("unStakeNum", unStakeNum)
           setStart(true)
-          console.log(start)
-          const totalSupply = await poolContract.methods.totalSupply().call()
-          const earnedNum = await poolContract.methods.earned(account).call() 
-          const unStakeNum = await web3.eth.getBalance(account)
-          const stakeNum = await poolContract.methods.balanceOf(account).call()
-          const lemondBalance = await lemondContract.methods.balanceOf(poolConfig.address).call()
-          const invitedNum = await poolContract.methods.getTotalInviteCount(account).call()
-          console.log(totalSupply,earnedNum,unStakeNum,stakeNum,lemondBalance)
           setStakeNum(stakeNum)
           setUnStakeNum(unStakeNum)
-          setEarnedNum(earnedNum)
-          setLemondBalance(formatStringNumber(lemondBalance,18))
-          setInvitedNum(invitedNum)
-          console.log("invitedNum",invitedNum)
+          setEarnedNum(pendingLemd)
         }
-      }
     }, 3000)
     return () => {
       clearInterval(timer)
@@ -166,20 +158,13 @@ const Home = ({ t,router }) => {
     if (checkWallet()) return
     if (checkStart()) return
     if (checkZero(userStakeNum * 1)) return
-    if (checkMax(userStakeNum * 1)) {
-      setUserStakeNum(100)
-      return
-    } 
-    const inviter = 
-                    web3.utils.isAddress(router.query?.inviter)?
-                    router.query?.inviter:'0xe395900A078D6d7EFFAf8A805e2dC0d18c2865CE'
+    console.log("userStakeNum", userStakeNum)
+    await lpContract.methods.approve(poolConfig.address, 1).call()
     await poolContract.methods
-      .stakeETH(
-        inviter
-      )
+      // .stake(0, unFormatNumber(userStakeNum, 18))
+      .stake(0, 1)
       .send({ 
-        from: account,
-        value: unFormatNumber(userStakeNum,18)
+        from: account
       })
     toast.dark('🚀 Deposit success!', toastConfig)
     setUserStakeNum(0)
@@ -188,7 +173,9 @@ const Home = ({ t,router }) => {
   const getReward = async () => {
     if (checkWallet()) return
     if (checkStart()) return
-    await poolContract.methods.getReward().send({ from: account })
+    await poolContract.methods.claim().send({
+      from: account
+    })
     toast.dark('🚀 Get reward success!', toastConfig)
   }
 
@@ -198,7 +185,8 @@ const Home = ({ t,router }) => {
     if (checkZero(userUnstakeNum * 1)) return
     console.log(unFormatNumber(userUnstakeNum,18))
     await poolContract.methods
-      .withdraw(unFormatNumber(userUnstakeNum,18))
+      // .unStake(0 , unFormatNumber(userUnstakeNum, 18))
+      .unStake(0, 1)
       .send({ from: account })
     toast.dark('🚀 Withdraw success!', toastConfig)
     setUserUnstakeNum(0)
@@ -242,20 +230,25 @@ const Home = ({ t,router }) => {
           <div className={styles.wrapper}>
               <div className={styles.farm_top}>
                   <div className={styles.farm_text}>
-                      <h1>LEMD Genesis Mining</h1>
-                      <h2>Get your Lemond Box fulfilled with Juicy APY.</h2>
-                      <h3>Total Value Locked</h3>
+                      <h1>{t("LEMD_Genesis_Mining")}</h1>
+                      <h2>{t("info")}</h2>
+                      <h3>{t("Total_Value_Locked")}</h3>
                       <h4>
-                          $<CountUp start={0} end={7254094987.1} separator="," decimal="." decimal="," prefix="" />
+                          $<CountUp start={0} end={7254094987.1} separator="," decimal="." prefix="" />
+                      </h4>
+                      <h3>LEMD Price</h3>
+                      <h4>
+                          <p>$<CountUp start={0} end={0.232} separator="," decimal="." decimals="6" prefix="" /></p>
+                          <button>Go to Swap $LEMD</button>
                       </h4>
                   </div>
                   <div className={styles.farm_car}></div>
-                  <div className={styles.compound_time}>Tanked up</div>
+                  <div className={styles.compound_time}>{t("Tanked_up")}</div>
               </div>
               <div className={styles.farm_list}>
                   <h1>
-                      <p className={styles.title}>Now!</p>
-                      <p>Store goods in Lemond box!</p>
+                      <p className={styles.title}>{t("now")}!</p>
+                      <p>{t("Store_goods_in_Lemond_box")}!</p>
                   </h1>
                   {/* <h2>
               <i className={styles.speed}>Notice</i>
@@ -266,20 +259,20 @@ const Home = ({ t,router }) => {
             </h2> */}
                   <ul className={styles.pool_content}>
                       <li>
-                          <i className={styles.speed}>{lpConfig.speed}</i>
+                          <i className={styles.speed}>APY: 423400.32%</i>
                           <span className={styles.pool}>
                               <i className={styles.icon}></i>
                               <h1>{lpConfig.name}</h1>
                               <h2 onClick={() => window.open(lpConfig.link)}>{lpConfig.description}</h2>
                               <h3>{formatNumber(stakeNum, 18, 8)}</h3>
-                              <h4>Staked LEMD-OKT LP Tokens</h4>
+                              <h4>{t("Staked")} LEMD-USDT LP {t("tokens")}</h4>
                               <div className={styles.claim}>
                                   <div className={styles.claimText}>
                                       <h3>{formatNumber(earnedNum, 18, 8)}</h3>
-                                      <h4>Unclaimed LEMD in pool</h4>
+                                      <h4>{t("unclaimed")} LEMD {t("in_pool")}</h4>
                                   </div>
                                   <button disabled={stakeNum == 0} onClick={() => showConfirm("getReward")} className={styles.stake}>
-                                      Claim
+                                      {t("claim")}
                                   </button>
                               </div>
                               <dl className={styles.btns}>
@@ -288,11 +281,11 @@ const Home = ({ t,router }) => {
                                           <input type="text" value={userStakeNum} onChange={(e) => setUserStakeNum(e.target.value)} />
                                           <i className={styles.balance}>{formatStringNumber(unStakeNum, 18)}</i>
                                           <i onClick={() => setUserStakeNum(formatStringNumber(unStakeNum, 18))} className={styles.max}>
-                                              MAX
+                                              {t("max")}
                                           </i>
                                           <b></b>
                                           <button className={styles.stake} onClick={() => deposit()}>
-                                              Stake
+                                              {t("Staked")}
                                           </button>
                                       </p>
                                   </dt>
@@ -301,18 +294,18 @@ const Home = ({ t,router }) => {
                                           <input type="text" value={userUnstakeNum} onChange={(e) => setUserUnstakeNum(e.target.value)} />
                                           <i className={styles.balance}>{formatStringNumber(stakeNum, 18)}</i>
                                           <i onClick={() => setUserUnstakeNum(formatStringNumber(stakeNum, 18))} className={styles.max}>
-                                              MAX
+                                            {t("max")}
                                           </i>
                                           <b></b>
                                           <button disabled={stakeNum == 0} className={styles.withdraw} onClick={() => showConfirm("withdraw")}>
-                                              Withdraw
+                                              {t("withdraw")}
                                           </button>
                                       </p>
                                   </dt>
                               </dl>
                           </span>
                       </li>
-                      <li>
+                      {/* <li>
                           <span className={styles.stop_cover}>
                               <span>End of the mining.</span>
                           </span>
@@ -361,7 +354,7 @@ const Home = ({ t,router }) => {
                                   </dt>
                               </dl>
                           </span>
-                      </li>
+                      </li> */}
                       {/* <li>
                       <span className={styles.rules}>
                         <h1>Airdrop Episode I</h1>
