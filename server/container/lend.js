@@ -136,7 +136,7 @@ export async function updateLendTotalInfo(req,res) {
     // } catch (error) {
     //     res.status(400)
     //     res.json({ message: "Bad Request", error: error })
-    }
+    // }
 }
 
 export async function getLendInfoFromToken(tokenAbi, tokenAddress, lTokenAbi, lTokenAddress, lemdDistributionAbi, lemdDistributionAddress, lemdPrice,tokenPrice, account) {
