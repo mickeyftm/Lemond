@@ -517,7 +517,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                 {!switchSupply && (
                                     <button disabled={supplyValue == 0 || parseFloat(supplyValue) > parseFloat(supplyBalanceAmount)} className={styles.green} onClick={() => redeem()}>
                                         {
-                                            parseFloat(supplyValue) > parseFloat(supplyBalanceAmount) ? t('insufficient_liquidity') : t('withdrew')
+                                            parseFloat(supplyValue) > parseFloat(supplyBalanceAmount) ? t('insufficient_liquidity') : t('withdraw')
                                         }
                                     </button>
                                 )}

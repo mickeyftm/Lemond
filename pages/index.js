@@ -16,8 +16,8 @@ const Home = ({ t }) => {
     const [totalValueLocked, setTotalValueLocked] = useState(0)
 
     useEffect(async () => {
-        //   const { data } = await getTotalValueLocked()
-        //   setTotalValueLocked(data.data)
+        const { data } = await getTotalValueLocked()
+        setTotalValueLocked(data.data)
     }, [])
 
     return (

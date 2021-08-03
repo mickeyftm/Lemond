@@ -14,12 +14,16 @@ const cx = classNames.bind(styles)
 import Web3 from "web3"
 import BigNumber from "bignumber.js"
 import { withRouter } from "next/router"
-import { getPrice, getLendInfo } from "../api/api"
+import {
+    getLendInfo,
+    getLemdPrice,
+    getTokensPrice
+} from "../api/api"
 
 const Home = ({ t, router }) => {
     const wallet = useWallet()
     const { account, ethereum } = wallet
-    const [lemdPrice, setLemdPrice] = useState(1)
+    const [lemdPrice, setLemdPrice] = useState(0)
     const [poolDate, setPoolDate] = useState([{}, {}, {}, {}, {}, {}, {}, {}])
     const [supplyBalance, setSupplyBalance] = useState(0)
     const [borrowBalance, setBorrowBalance] = useState(0)
@@ -59,11 +63,20 @@ const Home = ({ t, router }) => {
 
     useEffect(() => {
         const timer = setInterval(async () => {
-            const { data } = await getPrice()
-            setLemdPrice(data?.lemond?.usd)
+            const lemdPrice= await getLemdPrice()
+            setLemdPrice(lemdPrice)
             const lendInfo = await getLendInfo()
             console.log(lendInfo?.data?.data)
             setPoolInfo(lendInfo?.data?.data)
+            const prices = await getTokensPrice()
+            const {data} = prices.data
+            console.log(
+                data.pairs[0].token0Price, 
+                data.pairs[1].token0Price, 
+                data.pairs[2].token0Price, 
+                data.pairs[3].token0Price,
+                data.pairs[4].token0Price
+            )
             if (account) {
                 console.log(poolDate)
                 let supplyBalance = 0
@@ -236,7 +249,7 @@ const Home = ({ t, router }) => {
                         borrowRate={borrowRate}
                         updateDate={(data) => updatePoolDate(data, 4)}
                     />
-                    {/* <Pool
+                    <Pool
                         router={router}
                         lemdPrice={lemdPrice}
                         info={poolInfo[5]}
@@ -268,7 +281,7 @@ const Home = ({ t, router }) => {
                         borrowLimit={borrowBalanceLimit}
                         borrowRate={borrowRate}
                         updateDate={(data) => updatePoolDate(data, 7)}
-                    /> */}
+                    />
                 </ul>
             </div>
         </HeaderFooter>

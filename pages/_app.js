@@ -4,9 +4,11 @@ import { UseWalletProvider } from 'use-wallet'
 
 const MyApp = ({ Component, pageProps }) => (
     <UseWalletProvider
-        chainId={0x41}
+        chainId={0x42}
         connectors={{
-            walletconnect: { rpcUrl: "https://exchaintestrpc.okex.org" },
+            walletconnect: {
+                rpcUrl: "https://exchainrpc.okex.org"
+            },
         }}
     >
         <Component {...pageProps} />

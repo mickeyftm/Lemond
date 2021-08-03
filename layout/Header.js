@@ -19,15 +19,15 @@ const Header = (props,t) => {
         const data = [
             {
                 // chainId: "0x61",
-                chainId: "0x41",
-                chainName: "OKExChain Testnet",
+                chainId: "0x42",
+                chainName: "OKExChain Mainnet",
                 nativeCurrency: {
                     name: "OKT",
                     symbol: "OKT",
                     decimals: 18,
                 },
-                rpcUrls: ["https://exchaintestrpc.okex.org"],
-                blockExplorerUrls: ["https://www.oklink.com/okexchain-test/"],
+                rpcUrls: ["https://exchainrpc.okex.org"],
+                blockExplorerUrls: ["https://www.oklink.com/okexchain/"],
             },
         ]
         
@@ -56,6 +56,7 @@ const Header = (props,t) => {
                         <Link href="/cross_chain">
                             <li className={activeIndex == 4 ? styles.active : ""}>Cross Chain</li>
                         </Link>
+                        <li onClick={() => window.open("https://docs.lemond.money/")}>Doc</li>
                         <Link href="/about">
                             <li className={activeIndex == 5 ? styles.active : ""}>About</li>
                         </Link>

@@ -5,8 +5,12 @@ import { initWeb3, initContract } from '../libs/utils'
 import tokenConfig from '../../contract.config'
 import axios from 'axios'
 import BigNumber from "bignumber.js"
-import { getPrice } from '../../api/api'
+import {
+    getLemdPrice,
+    getTokensPrice
+} from '../../api/api'
 import fs from "fs"
+
 
 const Op = db.Op
 const Lend = db.Lend
@@ -101,18 +105,31 @@ export async function updateLendTotalInfo(req,res) {
             lUNIK
         } = tokenConfig.lend.lTokens
         const { lemdDistribution } = tokenConfig.lend.controller
-        const { data } = await getPrice()
-        await getLendInfoFromToken(OKT.abi, OKT.address, lEther.abi, lEther.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data?.okexchain?.usd, "")
-        await getLendInfoFromToken(OKB.abi, OKB.address, lOKB.abi, lOKB.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data?.okb?.usd, "")
-        await getLendInfoFromToken(USDT.abi, USDT.address, lUSDT.abi, lUSDT.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data?.tether?.usd, "")
-        await getLendInfoFromToken(ETHK.abi, ETHK.address, lETHK.abi, lETHK.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data?.ethereum?.usd, "")
-        await getLendInfoFromToken(BTCK.abi, BTCK.address, lBTCK.abi, lBTCK.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data?.bitcoin?.usd, "")
-        // await getLendInfoFromToken(DAIK.abi, DAIK.address, lDAIK.abi, lDAIK.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data?.dai?.usd, "")
-        // await getLendInfoFromToken(USDC.abi, USDC.address, lUSDC.abi, lUSDC.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data['usd-coin']['usd'], "")
-        // await getLendInfoFromToken(UNIK.abi, UNIK.address, lUNIK.abi, lUNIK.address, lemdDistribution.abi, lemdDistribution.address, data?.lemond?.usd, data?.uniswap?.usd, "")
+        const lemdPrice = await getLemdPrice()
+        const prices = await getTokensPrice()
+        const {
+            data
+        } = prices.data
+        console.log(
+            data.pairs,
+            data.pairs[0].token0Price,
+            data.pairs[1].token0Price,
+            data.pairs[2].token0Price,
+            data.pairs[3].token0Price,
+            data.pairs[4].token0Price,
+            data.pairs[5].token0Price
+        )
+        await getLendInfoFromToken(OKT.abi, OKT.address, lEther.abi, lEther.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, data.pairs[0].token0Price, "")
+        await getLendInfoFromToken(OKB.abi, OKB.address, lOKB.abi, lOKB.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, data.pairs[1].token0Price, "")
+        await getLendInfoFromToken(USDT.abi, USDT.address, lUSDT.abi, lUSDT.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, data.pairs[4].token0Price, "")
+        await getLendInfoFromToken(ETHK.abi, ETHK.address, lETHK.abi, lETHK.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, data.pairs[5].token0Price, "")
+        await getLendInfoFromToken(BTCK.abi, BTCK.address, lBTCK.abi, lBTCK.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, data.pairs[2].token0Price, "")
+        await getLendInfoFromToken(DAIK.abi, DAIK.address, lDAIK.abi, lDAIK.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, "1.0005")
+        await getLendInfoFromToken(USDC.abi, USDC.address, lUSDC.abi, lUSDC.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, "1.0001")
+        await getLendInfoFromToken(UNIK.abi, UNIK.address, lUNIK.abi, lUNIK.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, data.pairs[3].token0Price, "")
         let callBackData = {
             message: "Success",
-            data: null,
+            data: data.pairs,
         }
         res.status(200)
         res.json(callBackData)
@@ -197,26 +214,75 @@ export async function updatePriceOracle(req, res) {
         const mnemonic = fs.readFileSync(".secret").toString().trim()
         web3.eth.accounts.wallet.add(mnemonic)
         this.priceOracle = new web3.eth.Contract(priceOracle.abi, priceOracle.address)
+        const {
+            lEther,
+            lOKB,
+            lUSDT,
+            lETHK,
+            lBTCK,
+            lDAIK,
+            lUSDC,
+            lUNIK
+        } = tokenConfig.lend.lTokens
+        const prices = await getTokensPrice()
+        const {
+            data
+        } = prices.data
+        console.log(
+            data.pairs[0].token0Price,
+            data.pairs[1].token0Price,
+            data.pairs[3].token0Price,
+            data.pairs[4].token0Price,
+            data.pairs[2].token0Price,
+        )
+        // console.log(lEther.address, data.pairs[0].token0Price)
+        // await this.priceOracle.methods
+        //     .setUnderlyingPrice(lEther.address, ethers.utils.parseEther("555"))
+        //     .send({
+        //         from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b",
+        //         gas: 200000
+        //     })
         await this.priceOracle.methods
-            .setUnderlyingPrice("0x01b2E0845E2F711509b664CD0aD0b85E43d01878", ethers.utils.parseEther("555"))
-            .send({ from: "0xe395900A078D6d7EFFAf8A805e2dC0d18c2865CE", gas: 200000 })
+            .setUnderlyingPrice(lEther.address, ethers.utils.parseEther(parseFloat(data.pairs[0].token0Price).toFixed(2)))
+            .send({ from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b", gas: 200000 })
         await this.priceOracle.methods
-            .setUnderlyingPrice("0x3C39Eb941db646982e4691446f6aB60d737919bc", ethers.utils.parseEther("277198"))
-            .send({ from: "0xe395900A078D6d7EFFAf8A805e2dC0d18c2865CE", gas: 200000 })
+            .setUnderlyingPrice(lOKB.address, ethers.utils.parseEther(parseFloat(data.pairs[1].token0Price).toFixed(2)))
+            .send({ from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b", gas: 200000 })
         await this.priceOracle.methods
-            .setUnderlyingPrice("0x078baA86150286CC6e29Ec6B746593c14c7A82d3", ethers.utils.parseEther("1"))
-            .send({ from: "0xe395900A078D6d7EFFAf8A805e2dC0d18c2865CE", gas: 200000 })
+            .setUnderlyingPrice(lUSDT.address, ethers.utils.parseEther(parseFloat(data.pairs[4].token0Price).toFixed(2)))
+            .send({ from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b", gas: 200000 })
         await this.priceOracle.methods
-            .setUnderlyingPrice("0x54aecD365dB9F67bE5C9B6AE3F504e2e95604eB9", ethers.utils.parseEther("35532"))
-            .send({ from: "0xe395900A078D6d7EFFAf8A805e2dC0d18c2865CE", gas: 200000 })
+            .setUnderlyingPrice(lETHK.address, ethers.utils.parseEther(parseFloat(data.pairs[5].token0Price).toFixed(2)))
+            .send({ from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b", gas: 200000 })
         await this.priceOracle.methods
-            .setUnderlyingPrice("0xdc1e9B17EcF09EC52748f35059251FFb03a571c9", ethers.utils.parseEther("46"))
-            .send({ from: "0xe395900A078D6d7EFFAf8A805e2dC0d18c2865CE", gas: 200000 })
-        console.log(ethers.utils.formatEther((await this.priceOracle.methods.getUnderlyingPrice("0x01b2E0845E2F711509b664CD0aD0b85E43d01878").call()).toString()))
-        console.log(ethers.utils.formatEther((await this.priceOracle.methods.getUnderlyingPrice("0x3C39Eb941db646982e4691446f6aB60d737919bc").call()).toString()))
-        console.log(ethers.utils.formatEther((await this.priceOracle.methods.getUnderlyingPrice("0x078baA86150286CC6e29Ec6B746593c14c7A82d3").call()).toString()))
-        console.log(ethers.utils.formatEther((await this.priceOracle.methods.getUnderlyingPrice("0x54aecD365dB9F67bE5C9B6AE3F504e2e95604eB9").call()).toString()))
-        console.log(ethers.utils.formatEther((await this.priceOracle.methods.getUnderlyingPrice("0xdc1e9B17EcF09EC52748f35059251FFb03a571c9").call()).toString()))
+            .setUnderlyingPrice(lBTCK.address, ethers.utils.parseEther(parseFloat(data.pairs[2].token0Price).toFixed(2)))
+            .send({ from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b", gas: 200000 })
+        await this.priceOracle.methods
+            .setUnderlyingPrice(lUSDC.address, ethers.utils.parseEther("1.001"))
+            .send({
+                from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b",
+                gas: 200000
+            })
+        await this.priceOracle.methods
+            .setUnderlyingPrice(lDAIK.address, ethers.utils.parseEther("1.0005"))
+            .send({
+                from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b",
+                gas: 200000
+            })
+        await this.priceOracle.methods
+            .setUnderlyingPrice(lUNIK.address, ethers.utils.parseEther(parseFloat(data.pairs[3].token0Price).toFixed(2)))
+            .send({
+                from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b",
+                gas: 200000
+            })
+        let callBackData = {
+            success: true,
+            status: 200,
+            message: "Success",
+            data: null,
+        }
+        res.status(200)
+        res.json(callBackData)
     } catch (error) {
         res.status(400)
         res.json({ message: "Bad Request", error: error })

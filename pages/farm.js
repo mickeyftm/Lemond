@@ -21,7 +21,11 @@ import {
   formatStringNumber,
 } from '../libs/utils'
 import tokenConfig from '../contract.config.js'
-import CountUp from 'react-countup';
+import CountUp from 'react-countup'
+import {
+  getLPPairInfo,
+  getLemdPrice
+} from '../api/api'
 
 const Home = ({ t,router }) => {
   const wallet = useWallet()
@@ -32,8 +36,9 @@ const Home = ({ t,router }) => {
   const [unStakeNum, setUnStakeNum] = useState(0)
   const [earnedNum, setEarnedNum] = useState(0)
   const [start, setStart] = useState(false)
-  const [lemondBalance, setLemondBalance] = useState(1000000)
-  const [invitedNum,setInvitedNum] = useState(0)
+  const [tvl, setTvl] = useState(0)
+  const [apy, setApy] = useState(0)
+  const [LEMDPrice, setLEMDPrice ] = useState(0)
 
   const web3 = new Web3(ethereum)
   const poolConfig = tokenConfig.lend.controller.lemdBreeder
@@ -49,20 +54,30 @@ const Home = ({ t,router }) => {
 
   useEffect(() => {
     const timer = setInterval(async () => {
+      const {data} = await getLPPairInfo()
+      const tvl = data?.data?.uniswapFactories[0].totalLiquidityUSD
+      setTvl(!!tvl?tvl:0)
+      const lemdPrice = await getLemdPrice()
+      setLEMDPrice(lemdPrice)
+      const apy = lemdPrice * 60 * 60 * 24 * 364 * 19.5 / 4 / tvl * 100
+      setApy(apy.toFixed(2))
       if (account) {
         const startTime = await poolContract.methods.startBlock().call()
         console.log('startTime',startTime)
           const userInfo = await poolContract.methods.userInfo(0, account).call()
+          console.log("userInfo", userInfo)
           const poolLength = await poolContract.methods.poolLength().call()
           const usersLength = await poolContract.methods.usersLength(0).call()
           const pendingLemd = userInfo['pendingReward']
           const stakeNum = userInfo['amount']
           const unStakeNum = await lpContract.methods.balanceOf(account).call()
-          console.log("unStakeNum", unStakeNum)
+          const reward = await poolContract.methods.allPendingLemd(account).call()
+          console.log("reward", reward)
+          // console.log("unStakeNum", unStakeNum)
           setStart(true)
           setStakeNum(stakeNum)
           setUnStakeNum(unStakeNum)
-          setEarnedNum(pendingLemd)
+          setEarnedNum(reward)
         }
     }, 3000)
     return () => {
@@ -159,10 +174,26 @@ const Home = ({ t,router }) => {
     if (checkStart()) return
     if (checkZero(userStakeNum * 1)) return
     console.log("userStakeNum", userStakeNum)
-    await lpContract.methods.approve(poolConfig.address, 1).call()
+    let isApproval =
+      (await lpContract.methods
+        .allowance(account, poolConfig.address)
+        .call()) > 0 ?
+      true :
+      false
+    if (!isApproval) {
+      await lpContract.methods
+        .approve(
+          poolConfig.address,
+          '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+        )
+        .send({
+          from: account
+        })
+    }
+    console.log("isApproval", isApproval, "userStakeNum", userStakeNum, "unFormatNumber", unFormatNumber(userStakeNum, 18))
     await poolContract.methods
-      // .stake(0, unFormatNumber(userStakeNum, 18))
-      .stake(0, 1)
+      .stake(0, unFormatNumber(userStakeNum, 18))
+      // .stake(0, '1')
       .send({ 
         from: account
       })
@@ -173,7 +204,7 @@ const Home = ({ t,router }) => {
   const getReward = async () => {
     if (checkWallet()) return
     if (checkStart()) return
-    await poolContract.methods.claim().send({
+    await poolContract.methods.claim(0).send({
       from: account
     })
     toast.dark('🚀 Get reward success!', toastConfig)
@@ -183,10 +214,10 @@ const Home = ({ t,router }) => {
     if (checkWallet()) return
     if (checkStart()) return
     if (checkZero(userUnstakeNum * 1)) return
-    console.log(unFormatNumber(userUnstakeNum,18))
+    console.log(unFormatNumber(userUnstakeNum, 18))
     await poolContract.methods
-      // .unStake(0 , unFormatNumber(userUnstakeNum, 18))
-      .unStake(0, 1)
+      .unStake(0 , unFormatNumber(userUnstakeNum, 18))
+      // .unStake(0, 1)
       .send({ from: account })
     toast.dark('🚀 Withdraw success!', toastConfig)
     setUserUnstakeNum(0)
@@ -234,12 +265,12 @@ const Home = ({ t,router }) => {
                       <h2>{t("info")}</h2>
                       <h3>{t("Total_Value_Locked")}</h3>
                       <h4>
-                          $<CountUp start={0} end={7254094987.1} separator="," decimal="." prefix="" />
+                          $<CountUp start={0} end={tvl} separator="," decimal="." prefix="" />
                       </h4>
                       <h3>LEMD Price</h3>
                       <h4>
-                          <p>$<CountUp start={0} end={0.232} separator="," decimal="." decimals="6" prefix="" /></p>
-                          <button>Go to Swap $LEMD</button>
+                          <p>$<CountUp start={0} end={LEMDPrice} separator="," decimal="." decimals={6} prefix="" /></p>
+                          <button onClick={() => window.open(lpConfig.swap)}>Go to Swap $LEMD</button>
                       </h4>
                   </div>
                   <div className={styles.farm_car}></div>
@@ -259,7 +290,7 @@ const Home = ({ t,router }) => {
             </h2> */}
                   <ul className={styles.pool_content}>
                       <li>
-                          <i className={styles.speed}>APY: 423400.32%</i>
+                          <i className={styles.speed}>APY: {apy}%</i>
                           <span className={styles.pool}>
                               <i className={styles.icon}></i>
                               <h1>{lpConfig.name}</h1>

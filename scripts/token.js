@@ -18,9 +18,9 @@ async function main() {
     this.deployer = (await ethers.getSigners())[0].address
     console.log("deployer address", this.deployer)
 
-    this.lemdToken = await hre.ethers.getContractAt("LEMD", "0x41750b7827a21689728848aA19962cb3A24B11b7")
-    await this.lemdToken.addMinter(this.deployer)
-    await this.lemdToken.mint("0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b", hre.ethers.utils.parseEther("100000000000"))
+    this.lemdToken = await hre.ethers.getContractAt("LEMD", "0x148A059Ccc356Df25195155Ce32008B42B50094F")
+    // await this.lemdToken.addMinter(this.deployer)
+    await this.lemdToken.mint(this.deployer, hre.ethers.utils.parseEther("30000000"))
 
     // Deploy LEMD token
     // this.LEMD = await LEMD.new()

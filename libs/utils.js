@@ -41,6 +41,7 @@ export function formatAverageNumber(number, decimals) {
 
 export function unFormatNumber(number, decimals) {
     const bn = new BigNumber(String(number))
+    console.log("1000",(new BigNumber(String("1000")).times(new BigNumber(10).pow(decimals))).toString())
     return numbro(bn.times(new BigNumber(10).pow(decimals))).format({
         mantissa: 0,
     })
