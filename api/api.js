@@ -34,9 +34,11 @@ export const getLemdPrice = async () => {
 export const getLPPairInfo = async () => {
     const request = await axios.post(
         "https://okinfo.cherryswap.net/subgraphs/name/cherryswap/cherrysubgraph", {
-            "operationName": "uniswapFactories",
-            "variables": {},
-            "query": "query uniswapFactories {\n  uniswapFactories(where: {id: \"0x709102921812b3276a65092fe79edfc76c4d4afe\"}) {\n    id\n    totalVolumeUSD\n    totalVolumeETH\n    untrackedVolumeUSD\n    totalLiquidityUSD\n    totalLiquidityETH\n    txCount\n    pairCount\n    __typename\n  }\n}\n"
+            "operationName": "pairs",
+            "variables": {
+                "allPairs": ["0x994af547f45d4ad85d622fddbaa7956a3a5c13f0"]
+            },
+            "query": "fragment PairFields on Pair {\n  id\n  txCount\n  token0 {\n    id\n    symbol\n    name\n    totalLiquidity\n    derivedETH\n    __typename\n  }\n  token1 {\n    id\n    symbol\n    name\n    totalLiquidity\n    derivedETH\n    __typename\n  }\n  reserve0\n  reserve1\n  reserveUSD\n  totalSupply\n  trackedReserveETH\n  reserveETH\n  volumeUSD\n  untrackedVolumeUSD\n  token0Price\n  token1Price\n  createdAtTimestamp\n  __typename\n}\n\nquery pairs($allPairs: [Bytes]!) {\n  pairs(where: {id_in: $allPairs}, orderBy: trackedReserveETH, orderDirection: desc) {\n    ...PairFields\n    __typename\n  }\n}\n"
         }
     )
     return request
