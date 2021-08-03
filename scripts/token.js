@@ -15,6 +15,7 @@ const lemdDistribution = artifacts.require("LemdDistribution")
 
 const LemdBreeder = artifacts.require("LemdBreeder")
 const config = require("../contract.config")
+const JumpRateModel = artifacts.require("JumpRateModel")
 
 async function main() {
     await hre.run("compile")
@@ -22,24 +23,27 @@ async function main() {
     this.deployer = (await ethers.getSigners())[0].address
     console.log("deployer address", this.deployer)
 
+    this.jumpRateModel = await hre.ethers.getContractAt("JumpRateModel", "0x8d6Df88619E62E9f010A5F16A49E8DE92B57e493")
+    await this.jumpRateModel.updateJumpRateModel(hre.ethers.utils.parseEther("0"), hre.ethers.utils.parseEther("0.05"), hre.ethers.utils.parseEther("0.75"), hre.ethers.utils.parseEther("0.85"))
+
     // this.lemdToken = await hre.ethers.getContractAt("LEMD", "0x148A059Ccc356Df25195155Ce32008B42B50094F")
     // await this.lemdToken.addMinter(this.deployer)
     // await this.lemdToken.mint(this.deployer, hre.ethers.utils.parseEther("30000000"))
 
 
-    this.lemdDistribution = await hre.ethers.getContractAt("LemdDistribution", "0x9F097EE2dAad4487F6780D451cB277836B954FC1")
-    const {
-        lEther,
-        lOKB,
-        lUSDT,
-        lETHK,
-        lBTCK
-    } = config.lend.lTokens
-    await this.lemdDistribution._setLemdSpeed(lEther.address, hre.ethers.utils.parseEther("1.29"))
-    await this.lemdDistribution._setLemdSpeed(lOKB.address, hre.ethers.utils.parseEther("0.84"))
-    await this.lemdDistribution._setLemdSpeed(lUSDT.address, hre.ethers.utils.parseEther("0.75"))
-    await this.lemdDistribution._setLemdSpeed(lETHK.address, hre.ethers.utils.parseEther("1.32"))
-    await this.lemdDistribution._setLemdSpeed(lBTCK.address, hre.ethers.utils.parseEther("1.8"))
+    // this.lemdDistribution = await hre.ethers.getContractAt("LemdDistribution", "0x9F097EE2dAad4487F6780D451cB277836B954FC1")
+    // const {
+    //     lEther,
+    //     lOKB,
+    //     lUSDT,
+    //     lETHK,
+    //     lBTCK
+    // } = config.lend.lTokens
+    // await this.lemdDistribution._setLemdSpeed(lEther.address, hre.ethers.utils.parseEther("1.29"))
+    // await this.lemdDistribution._setLemdSpeed(lOKB.address, hre.ethers.utils.parseEther("0.84"))
+    // await this.lemdDistribution._setLemdSpeed(lUSDT.address, hre.ethers.utils.parseEther("0.75"))
+    // await this.lemdDistribution._setLemdSpeed(lETHK.address, hre.ethers.utils.parseEther("1.32"))
+    // await this.lemdDistribution._setLemdSpeed(lBTCK.address, hre.ethers.utils.parseEther("1.8"))
     // await this.comptroller._setBorrowPaused("0x460c60e179C209dB79E44cd10ed5dbFE5De81223", true)
     // await this.comptroller._setBorrowPaused("0xf8d3A4aeb14370f8c0e45CDDC240679cF1000Ef6", true)
     // await this.comptroller._setBorrowPaused("0x9FA53E22b71E0ECD0B5401CE0D78bb91bA46aB5a", true)

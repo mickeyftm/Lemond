@@ -174,17 +174,15 @@ export async function getLendInfoFromToken(tokenAbi, tokenAddress, lTokenAbi, lT
     } else {
         tokenName = await tokenContract.methods.name().call()
     }
-    const blocksPerDay = 17 * 60 * 24
+    const blocksPerDay = 15 * 60 * 24
     const daysPerYear = 365
     tokenPrice = new BigNumber(tokenPrice).times(new BigNumber(10).pow(18))
     console.log("tokenPrice", tokenPrice.toString())
     const supplyRatePerBlock = await lTokenContract.methods.supplyRatePerBlock().call()
     const borrowRatePerBlock = await lTokenContract.methods.borrowRatePerBlock().call()
     console.log("supplyRatePerBlock", supplyRatePerBlock, "borrowRatePerBlock", borrowRatePerBlock)
-    const supplyApy = ((Math.pow((supplyRatePerBlock / 1e18) * blocksPerDay + 1, daysPerYear) - 1) * 100).toFixed(2)
-    console.log("supplyApy", supplyApy)
-    const borrowApy = ((((Math.pow((borrowRatePerBlock / 1e18 * blocksPerDay) + 1, daysPerYear))) - 1) * 100).toFixed(2)
-    console.log("borrowApy", borrowApy)
+    // const supplyApy = ((Math.pow((supplyRatePerBlock / 1e18) * blocksPerDay + 1, daysPerYear) - 1) * 100).toFixed(2)
+    // const borrowApy = ((((Math.pow((borrowRatePerBlock / 1e18 * blocksPerDay) + 1, daysPerYear))) - 1) * 100).toFixed(2)
     const totalSupply = await lTokenContract.methods.totalSupply().call()
     console.log("totalSupply", totalSupply)
     const exchangeRate = (await lTokenContract.methods.exchangeRateCurrent().call()) / ethMantissa
@@ -195,8 +193,13 @@ export async function getLendInfoFromToken(tokenAbi, tokenAddress, lTokenAbi, lT
     console.log("totalBorrowsCurrent", totalBorrowsCurrent)
     const totalBorrow = new BigNumber(totalBorrowsCurrent).div(new BigNumber(10).pow(digits)).times(tokenPrice).div(new BigNumber(10).pow(18)).toFixed(2)
     console.log("totalBorrow", totalBorrow)
-    const marketSize = new BigNumber(cash).plus(totalBorrowsCurrent).times(tokenPrice).div(new BigNumber(10).pow(18)).div(new BigNumber(10).pow(18)).toFixed(2)
+    const marketSize = (new BigNumber(cash).plus(totalBorrowsCurrent)).times(tokenPrice).div(new BigNumber(10).pow(18)).div(new BigNumber(10).pow(18)).toFixed(2)
     console.log("marketSize", marketSize)
+    const utilizationRate = new BigNumber(totalBorrowsCurrent).div(new BigNumber(totalBorrowsCurrent).plus(cash))
+    const borrowApy = utilizationRate.times(0.05).div(0.85).times(100).toFixed(2)
+    console.log("borrowApy", borrowApy)
+    const supplyApy = (new BigNumber(borrowApy).times(1 - 0.1) * utilizationRate).toFixed(2)
+    console.log("supplyApy", supplyApy)
 
     const lemdSpeedPerBlock = new BigNumber(await lemdDistributionContract.methods.lemdSpeeds(lTokenAddress).call()).div(new BigNumber(10).pow(18)).times(lemdPrice)
     console.log("lemdSpeed", lemdSpeedPerBlock.toFixed())
