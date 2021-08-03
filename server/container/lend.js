@@ -130,14 +130,14 @@ export async function updateLendTotalInfo(req, res) {
     const {
         data
     } = prices.data
+
     console.log(
-        data.pairs,
+        "pairs_price",
         data.pairs[0].token0Price,
         data.pairs[1].token0Price,
-        data.pairs[2].token0Price,
         data.pairs[3].token0Price,
         data.pairs[4].token0Price,
-        data.pairs[5].token0Price
+        data.pairs[2].token0Price,
     )
     await getLendInfoFromToken(OKT.abi, OKT.address, lEther.abi, lEther.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, data.pairs[0].token0Price, "")
     await getLendInfoFromToken(OKB.abi, OKB.address, lOKB.abi, lOKB.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, data.pairs[1].token0Price, "")
@@ -164,7 +164,7 @@ export async function getLendInfoFromToken(tokenAbi, tokenAddress, lTokenAbi, lT
     const tokenContract = new web3.eth.Contract(tokenAbi, tokenAddress)
     const lTokenContract = new web3.eth.Contract(lTokenAbi, lTokenAddress)
     const lemdDistributionContract = new web3.eth.Contract(lemdDistributionAbi, lemdDistributionAddress)
-    var digits = 10
+    var digits = 18
     var ethMantissa = 1e10
     var tokenName
     if (tokenAddress == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
@@ -177,9 +177,10 @@ export async function getLendInfoFromToken(tokenAbi, tokenAddress, lTokenAbi, lT
     const blocksPerDay = 17 * 60 * 24
     const daysPerYear = 365
     tokenPrice = new BigNumber(tokenPrice).times(new BigNumber(10).pow(18))
-    console.log(tokenPrice)
+    console.log("tokenPrice", tokenPrice.toString())
     const supplyRatePerBlock = await lTokenContract.methods.supplyRatePerBlock().call()
     const borrowRatePerBlock = await lTokenContract.methods.borrowRatePerBlock().call()
+    console.log("supplyRatePerBlock", supplyRatePerBlock, "borrowRatePerBlock", borrowRatePerBlock)
     const supplyApy = ((Math.pow((supplyRatePerBlock / 1e18) * blocksPerDay + 1, daysPerYear) - 1) * 100).toFixed(2)
     console.log("supplyApy", supplyApy)
     const borrowApy = (((borrowRatePerBlock / 1e18) * blocksPerDay + 1) * 100).toFixed(2)
@@ -188,12 +189,15 @@ export async function getLendInfoFromToken(tokenAbi, tokenAddress, lTokenAbi, lT
     console.log("totalSupply", totalSupply)
     const exchangeRate = (await lTokenContract.methods.exchangeRateCurrent().call()) / ethMantissa
     console.log("exchangeRate", exchangeRate)
-    const marketSize = new BigNumber(totalSupply).times(exchangeRate).times(tokenPrice).div(new BigNumber(10).pow(18)).div(new BigNumber(10).pow(18)).toFixed(2)
-    console.log("marketSize", marketSize)
+    const cash = await lTokenContract.methods.getCash().call()
+    console.log("cash", cash)
     const totalBorrowsCurrent = await lTokenContract.methods.totalBorrowsCurrent().call()
     console.log("totalBorrowsCurrent", totalBorrowsCurrent)
     const totalBorrow = new BigNumber(totalBorrowsCurrent).div(new BigNumber(10).pow(digits)).times(tokenPrice).div(new BigNumber(10).pow(18)).toFixed(2)
     console.log("totalBorrow", totalBorrow)
+    const marketSize = new BigNumber(cash).plus(totalBorrowsCurrent).times(tokenPrice).div(new BigNumber(10).pow(18)).div(new BigNumber(10).pow(18)).toFixed(2)
+    console.log("marketSize", marketSize)
+
     const lemdSpeedPerBlock = new BigNumber(await lemdDistributionContract.methods.lemdSpeeds(lTokenAddress).call()).div(new BigNumber(10).pow(18)).times(lemdPrice)
     console.log("lemdSpeed", lemdSpeedPerBlock.toFixed())
     const supplyRewardAPY = new BigNumber(lemdSpeedPerBlock).times(blocksPerDay).times(daysPerYear).times(lemdPrice).div(marketSize).times(100).toFixed(2)
@@ -251,6 +255,7 @@ export async function updatePriceOracle(req, res) {
             data
         } = prices.data
         console.log(
+            "pairs_price",
             data.pairs[0].token0Price,
             data.pairs[1].token0Price,
             data.pairs[3].token0Price,
@@ -294,24 +299,24 @@ export async function updatePriceOracle(req, res) {
                 from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b",
                 gas: 200000
             })
-        await this.priceOracle.methods
-            .setUnderlyingPrice(lUSDC.address, ethers.utils.parseEther("1.001"))
-            .send({
-                from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b",
-                gas: 200000
-            })
-        await this.priceOracle.methods
-            .setUnderlyingPrice(lDAIK.address, ethers.utils.parseEther("1.0005"))
-            .send({
-                from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b",
-                gas: 200000
-            })
-        await this.priceOracle.methods
-            .setUnderlyingPrice(lUNIK.address, ethers.utils.parseEther(parseFloat(data.pairs[3].token0Price).toFixed(2)))
-            .send({
-                from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b",
-                gas: 200000
-            })
+        // await this.priceOracle.methods
+        //     .setUnderlyingPrice(lUSDC.address, ethers.utils.parseEther("1.001"))
+        //     .send({
+        //         from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b",
+        //         gas: 200000
+        //     })
+        // await this.priceOracle.methods
+        //     .setUnderlyingPrice(lDAIK.address, ethers.utils.parseEther("1.0005"))
+        //     .send({
+        //         from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b",
+        //         gas: 200000
+        //     })
+        // await this.priceOracle.methods
+        //     .setUnderlyingPrice(lUNIK.address, ethers.utils.parseEther(parseFloat(data.pairs[3].token0Price).toFixed(2)))
+        //     .send({
+        //         from: "0xaf4944eBFEc95497f1A1D3B1a955ABbe828f842b",
+        //         gas: 200000
+        //     })
         let callBackData = {
             success: true,
             status: 200,
