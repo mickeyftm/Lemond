@@ -73,7 +73,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
             if (account) {
                 var ethMantissa = 1e18
                 if (lToken.name != "OKT") {
-                    ethMantissa = 1e10
+                    ethMantissa = 1e18
                 }
                 const tokenBalance = lToken.name != "OKT" ? await tokenContract.methods.balanceOf(account).call() : await web3.eth.getBalance(account)
                 const supplyEnable = lToken.name != "OKT" ? (await tokenContract.methods.allowance(account, lToken.address).call()) > 0 : true
