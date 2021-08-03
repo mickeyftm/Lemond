@@ -13,6 +13,7 @@ const Comptroller = artifacts.require("Comptroller")
 const LEther = artifacts.require("LEther")
 const LERC20 = artifacts.require("LERC20")
 const SimplePriceOracle = artifacts.require("SimplePriceOracle")
+const LEMD = artifacts.require("LEMD")
 
 const Airdrop = artifacts.require("Airdrop")
 
@@ -42,8 +43,8 @@ async function main() {
     this.deployer = (await ethers.getSigners())[0].address
     console.log("deployer address", this.deployer)
 
-    const contract = await hre.ethers.getContractAt("Airdrop", "0xe287982d82b2b6d27dB3a41BD7179DeF69503106")
-    await getAddress(contract)
+    // const contract = await hre.ethers.getContractAt("Airdrop", "0xe287982d82b2b6d27dB3a41BD7179DeF69503106")
+    // await getAddress(contract)
 
     // const contract = await hre.ethers.getContractAt("Comptroller", "0x4E51117Fc621408A418444681694Fb26a597e8a1")
     // await contract

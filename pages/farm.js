@@ -59,7 +59,7 @@ const Home = ({ t,router }) => {
       setTvl(!!tvl ? tvl : 0)
       const lemdPrice = await getLemdPrice()
       setLEMDPrice(lemdPrice)
-      const apy = lemdPrice * 60 * 60 * 24 * 364 * 19.5 / 4 / tvl * 10000
+      const apy = lemdPrice * 60 * 60 * 24 * 364 * 19.5 / 4 / tvl * 100
       setApy(apy.toFixed(2))
       if (account) {
         const startTime = await poolContract.methods.startBlock().call()

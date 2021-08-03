@@ -4,7 +4,7 @@ module.exports = {
             name: "LEMD-USDT LP Pool",
             description: "Get LEMD-USDT LP Token",
             icon: "icon_domo_eth",
-            link: "https://www.cherryswap.net/#/add/ETH/0x148A059Ccc356Df25195155Ce32008B42B50094F",
+            link: "https://www.cherryswap.net/#/add/0x382bb369d343125bfb2117af9c149795c6c65c50/0x148A059Ccc356Df25195155Ce32008B42B50094F",
             swap: "https://www.cherryswap.net/#/swap?inputCurrency=OKT&outputCurrency=0x148A059Ccc356Df25195155Ce32008B42B50094F",
             address: "0x994af547f45d4ad85d622fddbaa7956a3a5c13f0",
             abi: require("./tokenAbi/LP.json"),

@@ -12,15 +12,27 @@ const LEMD = artifacts.require("LEMD")
 // const LEMDCap = artifacts.require("LEMDCap")
 // const LEMDLimit = artifacts.require("LEMDLimit")
 
+const LemdBreeder = artifacts.require("LemdBreeder")
+
 async function main() {
     await hre.run("compile")
 
     this.deployer = (await ethers.getSigners())[0].address
     console.log("deployer address", this.deployer)
 
-    this.lemdToken = await hre.ethers.getContractAt("LEMD", "0x148A059Ccc356Df25195155Ce32008B42B50094F")
+    // this.lemdToken = await hre.ethers.getContractAt("LEMD", "0x148A059Ccc356Df25195155Ce32008B42B50094F")
     // await this.lemdToken.addMinter(this.deployer)
-    await this.lemdToken.mint(this.deployer, hre.ethers.utils.parseEther("30000000"))
+    // await this.lemdToken.mint(this.deployer, hre.ethers.utils.parseEther("30000000"))
+
+    0x9FA53E22b71E0ECD0B5401CE0D78bb91bA46aB5a
+
+    this.comptroller = await hre.ethers.getContractAt("Comptroller", "0x7D9eBc646E3f1750C5D164cf29Ef14884Df10714")
+    await this.comptroller._setBorrowPaused("0x460c60e179C209dB79E44cd10ed5dbFE5De81223", true)
+    await this.comptroller._setBorrowPaused("0xf8d3A4aeb14370f8c0e45CDDC240679cF1000Ef6", true)
+    await this.comptroller._setBorrowPaused("0x9FA53E22b71E0ECD0B5401CE0D78bb91bA46aB5a", true)
+
+    // this.LemdBreeder = await hre.ethers.getContractAt("LemdBreeder", "0x41750b7827a21689728848aA19962cb3A24B11b7")
+    // await this.LemdBreeder.setDevAddr("0xF284c7E0e43b4e5b4A94120c811b1B281f0700FF")
 
     // Deploy LEMD token
     // this.LEMD = await LEMD.new()

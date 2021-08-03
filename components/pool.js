@@ -52,7 +52,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
 
     var digits = 18
     if (lToken.name != "OKT") {
-        digits = 10
+        digits = 18
     }
 
     useEffect(() => {
