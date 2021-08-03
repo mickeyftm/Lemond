@@ -1,6 +1,6 @@
 import Web3 from 'web3'
 
-const RPC_URL = "https://exchaintestrpc.okex.org"
+const RPC_URL = "https://exchainrpc.okex.org"
 
 export function initWeb3() {
     const web3 = new Web3(new Web3.providers.HttpProvider(RPC_URL))
