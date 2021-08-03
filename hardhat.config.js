@@ -36,7 +36,7 @@ module.exports = {
         ok: {
             url: "https://exchainrpc.okex.org",
             accounts: [mnemonic],
-            timeout: 30000,
+            timeout: 100000,
         },
         okexchain: {
             url: "https://exchaintestrpc.okex.org",
