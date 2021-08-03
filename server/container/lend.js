@@ -83,7 +83,7 @@ export async function getLendInfo(req, res) {
 }
 
 export async function updateLendTotalInfo(req,res) {
-    try {
+    // try {
         const {
             OKT,
             OKB,
@@ -124,18 +124,18 @@ export async function updateLendTotalInfo(req,res) {
         await getLendInfoFromToken(USDT.abi, USDT.address, lUSDT.abi, lUSDT.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, data.pairs[4].token0Price, "")
         await getLendInfoFromToken(ETHK.abi, ETHK.address, lETHK.abi, lETHK.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, data.pairs[5].token0Price, "")
         await getLendInfoFromToken(BTCK.abi, BTCK.address, lBTCK.abi, lBTCK.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, data.pairs[2].token0Price, "")
-        await getLendInfoFromToken(DAIK.abi, DAIK.address, lDAIK.abi, lDAIK.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, "1.0005")
-        await getLendInfoFromToken(USDC.abi, USDC.address, lUSDC.abi, lUSDC.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, "1.0001")
-        await getLendInfoFromToken(UNIK.abi, UNIK.address, lUNIK.abi, lUNIK.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, data.pairs[3].token0Price, "")
+        // await getLendInfoFromToken(DAIK.abi, DAIK.address, lDAIK.abi, lDAIK.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, "1.0005")
+        // await getLendInfoFromToken(USDC.abi, USDC.address, lUSDC.abi, lUSDC.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, "1.0001")
+        // await getLendInfoFromToken(UNIK.abi, UNIK.address, lUNIK.abi, lUNIK.address, lemdDistribution.abi, lemdDistribution.address, lemdPrice, data.pairs[3].token0Price, "")
         let callBackData = {
             message: "Success",
             data: data.pairs,
         }
         res.status(200)
         res.json(callBackData)
-    } catch (error) {
-        res.status(400)
-        res.json({ message: "Bad Request", error: error })
+    // } catch (error) {
+    //     res.status(400)
+    //     res.json({ message: "Bad Request", error: error })
     }
 }
 

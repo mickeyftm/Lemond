@@ -22,7 +22,7 @@ export const getLemdPrice = async () => {
             {
                 "operationName": "pairs",
                 "variables": {
-                    "allPairs": ["0x089dedbfd12f2ad990c55a2f1061b8ad986bff88"]
+                    "allPairs": ["0x994af547f45d4ad85d622fddbaa7956a3a5c13f0"]
                 },
                 "query": "fragment PairFields on Pair {\n  id\n  txCount\n  token0 {\n    id\n    symbol\n    name\n    totalLiquidity\n    derivedETH\n    __typename\n  }\n  token1 {\n    id\n    symbol\n    name\n    totalLiquidity\n    derivedETH\n    __typename\n  }\n  reserve0\n  reserve1\n  reserveUSD\n  totalSupply\n  trackedReserveETH\n  reserveETH\n  volumeUSD\n  untrackedVolumeUSD\n  token0Price\n  token1Price\n  createdAtTimestamp\n  __typename\n}\n\nquery pairs($allPairs: [Bytes]!) {\n  pairs(where: {id_in: $allPairs}, orderBy: trackedReserveETH, orderDirection: desc) {\n    ...PairFields\n    __typename\n  }\n}\n"
             }

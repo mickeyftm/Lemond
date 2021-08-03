@@ -249,7 +249,7 @@ const Home = ({ t, router }) => {
                         borrowRate={borrowRate}
                         updateDate={(data) => updatePoolDate(data, 4)}
                     />
-                    <Pool
+                    {/* <Pool
                         router={router}
                         lemdPrice={lemdPrice}
                         info={poolInfo[5]}
@@ -281,7 +281,7 @@ const Home = ({ t, router }) => {
                         borrowLimit={borrowBalanceLimit}
                         borrowRate={borrowRate}
                         updateDate={(data) => updatePoolDate(data, 7)}
-                    />
+                    /> */}
                 </ul>
             </div>
         </HeaderFooter>
