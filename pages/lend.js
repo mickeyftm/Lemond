@@ -189,7 +189,7 @@ const Home = ({ t, router }) => {
                             </i>
                         </div>
                         <span className={styles.text}>Borrow Limit
-                            <b>ⓘ<i>When Borrow limit reach 100%, liquidation occurs！</i></b>
+                            {/* <b>ⓘ<i>When Borrow limit reach 100%, liquidation occurs！</i></b> */}
                         </span>
                         <span className={styles.num}>{formatUSDNmuber(borrowBalanceLimit, 2)}</span>
                         <span className={styles.borrowed}>{borrowRate} %</span>
