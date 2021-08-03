@@ -72,9 +72,6 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
 
             if (account) {
                 var ethMantissa = 1e18
-                if (lToken.name != "OKT") {
-                    ethMantissa = 1e18
-                }
                 const tokenBalance = lToken.name != "OKT" ? await tokenContract.methods.balanceOf(account).call() : await web3.eth.getBalance(account)
                 const supplyEnable = lToken.name != "OKT" ? (await tokenContract.methods.allowance(account, lToken.address).call()) > 0 : true
                 const borrowEnable = lToken.name != "OKT" ? (await lTokenContract.methods.allowance(account, lToken.address).call()) > 0 : true
@@ -263,7 +260,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
         if (checkWallet()) return
         if (checkZero(supplyValue * 1)) return
         loading()
-        const value = lToken.name == "OKT" ? unFormatNumber(supplyValue, 18) : unFormatNumber(supplyValue, 10)
+        const value = unFormatNumber(supplyValue, 18) 
         console.log(value, "OKT", lToken.name)
         if (lToken.name == "OKT") {
             await lTokenContract.methods.mint().send({ from: account, value: value })
@@ -279,7 +276,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
         if (checkWallet()) return
         if (checkZero(supplyValue * 1)) return
         loading()
-        const value = lToken.name == "OKT" ? unFormatNumber(supplyValue, 18) : unFormatNumber(supplyValue, 10)
+        const value =  unFormatNumber(supplyValue, 18)
         console.log("redeem", value)
         await lTokenContract.methods.redeemUnderlying(value).send({ from: account })
         setSupplyValue(0)
@@ -297,7 +294,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
         if (checkWallet()) return
         if (checkZero(borrowValue * 1)) return
         loading()
-        const value = lToken.name == "OKT" ? unFormatNumber(borrowValue, 18) : unFormatNumber(borrowValue, 10)
+        const value =  unFormatNumber(borrowValue, 18) 
         await lTokenContract.methods.borrow(value).send({ from: account })
         setBorrowValue(0)
         closeFn()
@@ -308,7 +305,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
         if (checkWallet()) return
         if (checkZero(borrowValue * 1)) return
         loading()
-        const value = lToken.name == "OKT" ? unFormatNumber(borrowValue, 18) : unFormatNumber(borrowValue, 10)
+        const value = unFormatNumber(borrowValue, 18)
         if (lToken.name == "OKT") {
             await lTokenContract.methods.repayBorrow().send({ from: account, value: value })
         } else {
@@ -449,7 +446,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                         onClick={() => {
                                             if (checkWallet()) return
                                             if (switchSupply) {
-                                                const value = lToken.name == "OKT" ? formatStringNumber(tokenBalance, 18) : formatStringNumber(tokenBalance, 10)
+                                                const value = formatStringNumber(tokenBalance, 18) 
                                                 setSupplyValue(value)
                                             } else {
                                                 var value
@@ -459,7 +456,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                                 }
                                                 var supplyValues = parseFloat(value) > parseFloat(supplyBalanceAmount) ? supplyBalanceAmount : value
                                                 console.log("brrow",supplyBalanceAmount,value.toString(), parseFloat(value) > parseFloat(supplyBalanceAmount))
-                                                supplyValues = lToken.name == "OKT" ? formatDecimals(supplyValues, 18) : formatDecimals(supplyValues, 10)
+                                                supplyValues =  formatDecimals(supplyValues, 18)
                                                 console.log("supplyValues", supplyValues)
                                                 setSupplyValue(supplyValues)
                                             }
@@ -503,12 +500,12 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                 {supplyEnable && switchSupply && (
                                     <button
                                         disabled={
-                                            supplyValue == 0 || parseFloat(supplyValue) > parseFloat(lToken.name == "OKT" ? formatStringNumber(tokenBalance, 18) : formatStringNumber(tokenBalance, 10))
+                                            supplyValue == 0 || parseFloat(supplyValue) > parseFloat(formatStringNumber(tokenBalance, 18) )
                                         }
                                         className={styles.green}
                                         onClick={() => mint()}
                                     >
-                                        {parseFloat(supplyValue) > parseFloat(lToken.name == "OKT" ? formatStringNumber(tokenBalance, 18) : formatStringNumber(tokenBalance, 10))
+                                        {parseFloat(supplyValue) > parseFloat(formatStringNumber(tokenBalance, 18) )
                                             ? t('no_funds_available')
                                             : t('SUPPLY')
                                             }
@@ -524,7 +521,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                             </span>
                             <span className={styles.balance}>
                                 <h1>
-                                    {switchSupply && (lToken.name == "OKT" ? formatNumber(tokenBalance, 18, 8) : formatNumber(tokenBalance, 10, 8))}
+                                    {switchSupply && ( formatNumber(tokenBalance, 18, 8) )}
                                     {!switchSupply && formatThousandNumber(supplyBalanceAmount, 8)} <b>{lToken.name}</b>
                                 </h1>
                                 <p>
@@ -579,7 +576,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                                     value = new BigNumber(remainingValue).times(0.8)
                                                 }
                                                 console.log("borrowLimit",borrowLimit, "value", value,"remainingValue",remainingValue)
-                                                value = lToken.name == "OKT" ? formatDecimals(value, 18) : formatDecimals(value, 10)
+                                                value = formatDecimals(value, 18) 
                                                 setBorrowValue(value)
                                             } else {
                                                 setBorrowValue(borrowBalanceAmount)
@@ -646,7 +643,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                             <span className={cx(styles.balance, styles.fr)}>
                                 <h1>
                                     {switchBorrow && formatThousandNumber(borrowBalanceAmount, 8)}
-                                    {!switchBorrow && (lToken.name == "OKT" ? formatNumber(tokenBalance, 18, 8) : formatNumber(tokenBalance, 10, 8))} <b>{lToken.name}</b>
+                                    {!switchBorrow && formatNumber(tokenBalance, 18, 8)} <b>{lToken.name}</b>
                                 </h1>
                                 <p>
                                     {switchBorrow && t('currently_borrowing')}
