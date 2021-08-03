@@ -56,7 +56,7 @@ const Home = ({ t,router }) => {
     const timer = setInterval(async () => {
       const {data} = await getLPPairInfo()
       const tvl = data?.data?.uniswapFactories[0].totalLiquidityUSD
-      setTvl(!!tvl?tvl:0)
+      setTvl(403135)
       const lemdPrice = await getLemdPrice()
       setLEMDPrice(lemdPrice)
       const apy = lemdPrice * 60 * 60 * 24 * 364 * 19.5 / 4 / tvl * 100
