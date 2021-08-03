@@ -458,6 +458,9 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                                 console.log("brrow",supplyBalanceAmount,value.toString(), parseFloat(value) > parseFloat(supplyBalanceAmount))
                                                 supplyValues =  formatDecimals(supplyValues, 18)
                                                 console.log("supplyValues", supplyValues)
+                                                if (borrowRate >= 80){
+                                                    supplyValues = 0
+                                                }
                                                 setSupplyValue(supplyValues)
                                             }
                                         }}
@@ -579,7 +582,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                                 value = formatDecimals(value, 18) 
                                                 setBorrowValue(value)
                                             } else {
-                                                setBorrowValue(borrowBalanceAmount)
+                                                setBorrowValue(borrowBalanceAmount > tokenBalance ? tokenBalance : borrowBalanceAmount)
                                             }
                                         }}
                                     >

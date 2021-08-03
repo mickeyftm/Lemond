@@ -11,8 +11,10 @@ const web3 = require("web3")
 const LEMD = artifacts.require("LEMD")
 // const LEMDCap = artifacts.require("LEMDCap")
 // const LEMDLimit = artifacts.require("LEMDLimit")
+const lemdDistribution = artifacts.require("LemdDistribution")
 
 const LemdBreeder = artifacts.require("LemdBreeder")
+const config = require("../contract.config")
 
 async function main() {
     await hre.run("compile")
@@ -24,12 +26,23 @@ async function main() {
     // await this.lemdToken.addMinter(this.deployer)
     // await this.lemdToken.mint(this.deployer, hre.ethers.utils.parseEther("30000000"))
 
-    0x9FA53E22b71E0ECD0B5401CE0D78bb91bA46aB5a
 
-    this.comptroller = await hre.ethers.getContractAt("Comptroller", "0x7D9eBc646E3f1750C5D164cf29Ef14884Df10714")
-    await this.comptroller._setBorrowPaused("0x460c60e179C209dB79E44cd10ed5dbFE5De81223", true)
-    await this.comptroller._setBorrowPaused("0xf8d3A4aeb14370f8c0e45CDDC240679cF1000Ef6", true)
-    await this.comptroller._setBorrowPaused("0x9FA53E22b71E0ECD0B5401CE0D78bb91bA46aB5a", true)
+    this.lemdDistribution = await hre.ethers.getContractAt("LemdDistribution", "0x9F097EE2dAad4487F6780D451cB277836B954FC1")
+    const {
+        lEther,
+        lOKB,
+        lUSDT,
+        lETHK,
+        lBTCK
+    } = config.lend.lTokens
+    await this.lemdDistribution._setLemdSpeed(lEther.address, hre.ethers.utils.parseEther("1.29"))
+    await this.lemdDistribution._setLemdSpeed(lOKB.address, hre.ethers.utils.parseEther("0.84"))
+    await this.lemdDistribution._setLemdSpeed(lUSDT.address, hre.ethers.utils.parseEther("0.75"))
+    await this.lemdDistribution._setLemdSpeed(lETHK.address, hre.ethers.utils.parseEther("1.32"))
+    await this.lemdDistribution._setLemdSpeed(lBTCK.address, hre.ethers.utils.parseEther("1.8"))
+    // await this.comptroller._setBorrowPaused("0x460c60e179C209dB79E44cd10ed5dbFE5De81223", true)
+    // await this.comptroller._setBorrowPaused("0xf8d3A4aeb14370f8c0e45CDDC240679cF1000Ef6", true)
+    // await this.comptroller._setBorrowPaused("0x9FA53E22b71E0ECD0B5401CE0D78bb91bA46aB5a", true)
 
     // this.LemdBreeder = await hre.ethers.getContractAt("LemdBreeder", "0x41750b7827a21689728848aA19962cb3A24B11b7")
     // await this.LemdBreeder.setDevAddr("0xF284c7E0e43b4e5b4A94120c811b1B281f0700FF")

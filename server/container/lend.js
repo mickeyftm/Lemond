@@ -183,7 +183,7 @@ export async function getLendInfoFromToken(tokenAbi, tokenAddress, lTokenAbi, lT
     console.log("supplyRatePerBlock", supplyRatePerBlock, "borrowRatePerBlock", borrowRatePerBlock)
     const supplyApy = ((Math.pow((supplyRatePerBlock / 1e18) * blocksPerDay + 1, daysPerYear) - 1) * 100).toFixed(2)
     console.log("supplyApy", supplyApy)
-    const borrowApy = (((borrowRatePerBlock / 1e18) * blocksPerDay + 1) * 100).toFixed(2)
+    const borrowApy = ((((Math.pow((borrowRatePerBlock / 1e18 * blocksPerDay) + 1, daysPerYear))) - 1) * 100).toFixed(2)
     console.log("borrowApy", borrowApy)
     const totalSupply = await lTokenContract.methods.totalSupply().call()
     console.log("totalSupply", totalSupply)

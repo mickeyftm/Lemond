@@ -213,8 +213,38 @@
             }
             .text {
                 float: left;
-                opacity: 0.45;
+                // opacity: 0.45;
+                color: #979797;
                 font-size: 12px;
+                b{
+                    display: inline-block;
+                    color: #ffa924;
+                    font-weight: bold;
+                    margin-left: 4px;
+                    cursor: pointer;
+                    font-size: 13px;
+                    position: relative;
+                    i{
+                        display: none;
+                        position: absolute;
+                        width: 200px;
+                        text-align: left;
+                        font-style: normal;
+                        font-weight: normal;
+                        background: #1b1f25;
+                        padding: 5px 10px;
+                        border-radius: 5px;
+                        position: absolute;
+                        top: -45px;
+                        left: -40px;
+                        z-index: 999;
+                    }
+                    &:hover{
+                        i{
+                            display: block;
+                        }
+                    }
+                }
             }
             .num {
                 float: right;
