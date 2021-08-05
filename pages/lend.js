@@ -24,13 +24,13 @@ const Home = ({ t, router }) => {
     const wallet = useWallet()
     const { account, ethereum } = wallet
     const [lemdPrice, setLemdPrice] = useState(0)
-    const [poolDate, setPoolDate] = useState([{}, {}, {}, {}, {}, {}, {}, {}])
+    const [poolDate, setPoolDate] = useState([{}, {}, {}, {}, {}])
     const [supplyBalance, setSupplyBalance] = useState(0)
     const [borrowBalance, setBorrowBalance] = useState(0)
     const [borrowBalanceLimit, setBorrowBalanceLimit] = useState(0)
     const [borrowRate, setBorrowRate] = useState(0)
     const [pendingLemd, setPendingLemd] = useState(0)
-    const [poolInfo, setPoolInfo] = useState([{}, {}, {}, {}, {}, {}, {}, {}])
+    const [poolInfo, setPoolInfo] = useState([{}, {}, {}, {}, {} ])
 
     const web3 = new Web3(ethereum)
     const {
@@ -85,12 +85,17 @@ const Home = ({ t, router }) => {
                 let borrowRate = 0
                 for (const index in poolDate) {
                     if (JSON.stringify(poolDate[index]) != "{}") {
-                        supplyBalance += parseInt(poolDate[index].supplyBalance)
-                        borrowBalance += parseInt(poolDate[index].borrowBalance)
+                        supplyBalance += parseFloat(poolDate[index].supplyBalance)
+                        borrowBalance += parseFloat(poolDate[index].borrowBalance)
+                        console.log("poolDate borrowBalance", poolDate, index, borrowBalance, parseFloat(poolDate[index].borrowBalance))
                         borrowBalanceLimit = new BigNumber(borrowBalanceLimit).plus(poolDate[index].borrowBalanceLimit)
                         console.log("borrowBalanceLimit", poolDate[index].borrowBalanceLimit.toString())
+                        if(index == 0 ){
+                            console.log("borrowBalance0", parseFloat(poolDate[index].borrowBalance))
+                        }
                     }
                 }
+                console.log("borrowBalance", borrowBalance)
                 borrowRate = new BigNumber(borrowBalance).div(borrowBalanceLimit).times(100).toFixed(2)
                 borrowRate = isNaN(borrowRate) ? 0 : borrowRate
 
@@ -101,6 +106,9 @@ const Home = ({ t, router }) => {
                 setBorrowBalanceLimit(borrowBalanceLimit.toFixed(2))
                 setBorrowRate(borrowRate)
                 setPendingLemd(pendingLemd)
+
+                console.log("poolDate", poolDate)
+
 
             }
         }, 3000)

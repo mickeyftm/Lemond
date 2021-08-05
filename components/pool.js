@@ -7,7 +7,18 @@ import styles from "../styles/lend.less"
 import { confirmAlert } from "react-confirm-alert"
 import { ToastContainer, toast } from "react-toastify"
 import { toastConfig } from "../libs/utils"
-import { formatUSDNmuber, formatThousandNumber, formatAverageNumber, formatNumber, formatDecimals, unFormatNumber, formatStringNumber } from "../libs/utils"
+import {
+    formatUSDNmuber,
+    formatThousandNumber,
+    formatAverageNumber,
+    formatNumber,
+    formatDecimals,
+    unFormatNumber,
+    formatStringNumber,
+    unFormatNumberFixed,
+    formatDecimalsFixed,
+    formatStringNumberFixed
+} from "../libs/utils"
 import tokenConfig from "../contract.config"
 import BigNumber from "bignumber.js"
 import Switch from "react-switch"
@@ -260,7 +271,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
         if (checkWallet()) return
         if (checkZero(supplyValue * 1)) return
         loading()
-        const value = unFormatNumber(supplyValue, 18) 
+        const value = unFormatNumberFixed(supplyValue, 18)
         console.log(value, "OKT", lToken.name)
         if (lToken.name == "OKT") {
             await lTokenContract.methods.mint().send({ from: account, value: value })
@@ -276,7 +287,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
         if (checkWallet()) return
         if (checkZero(supplyValue * 1)) return
         loading()
-        const value =  unFormatNumber(supplyValue, 18)
+        const value = unFormatNumberFixed(supplyValue, 18)
         console.log("redeem", value)
         await lTokenContract.methods.redeemUnderlying(value).send({ from: account })
         setSupplyValue(0)
@@ -294,7 +305,7 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
         if (checkWallet()) return
         if (checkZero(borrowValue * 1)) return
         loading()
-        const value =  unFormatNumber(borrowValue, 18) 
+        const value = unFormatNumberFixed(borrowValue, 18)
         await lTokenContract.methods.borrow(value).send({ from: account })
         setBorrowValue(0)
         closeFn()
@@ -305,7 +316,8 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
         if (checkWallet()) return
         if (checkZero(borrowValue * 1)) return
         loading()
-        const value = unFormatNumber(borrowValue, 18)
+        const value = unFormatNumberFixed(borrowValue, 18)
+        console.log(borrowValue,value)
         if (lToken.name == "OKT") {
             await lTokenContract.methods.repayBorrow().send({ from: account, value: value })
         } else {
@@ -446,7 +458,8 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                         onClick={() => {
                                             if (checkWallet()) return
                                             if (switchSupply) {
-                                                const value = formatStringNumber(tokenBalance, 18) 
+                                                const value = formatDecimals(formatStringNumber(tokenBalance, 18), 8)
+                                                console.log("supply_amount",value)
                                                 setSupplyValue(value)
                                             } else {
                                                 var value
@@ -454,9 +467,13 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                                 if (borrow == 0) {
                                                     value = supplyBalanceAmount
                                                 }
+                                                console.log("borrow",borrow)
+                                                var withdrawAll = new BigNumber(supplyBalanceAmount).minus(new BigNumber(borrow).times(1.25).div(new BigNumber(tokenPrice).div(new BigNumber(10).pow(18))))
+                                                console.log("withdrew_amount", value.toString())
+                                                value = withdrawAll > value ? withdrawAll : value
                                                 var supplyValues = parseFloat(value) > parseFloat(supplyBalanceAmount) ? supplyBalanceAmount : value
                                                 console.log("brrow",supplyBalanceAmount,value.toString(), parseFloat(value) > parseFloat(supplyBalanceAmount))
-                                                supplyValues =  formatDecimals(supplyValues, 18)
+                                                supplyValues = formatDecimals(supplyValues, 8)
                                                 console.log("supplyValues", supplyValues)
                                                 if (borrowRate >= 80){
                                                     supplyValues = 0
@@ -579,10 +596,14 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                                     value = new BigNumber(remainingValue).times(0.8)
                                                 }
                                                 console.log("borrowLimit",borrowLimit, "value", value,"remainingValue",remainingValue)
-                                                value = formatDecimals(value, 18) 
+                                                value = formatDecimalsFixed(value, 8)
                                                 setBorrowValue(value)
                                             } else {
-                                                setBorrowValue(borrowBalanceAmount > tokenBalance ? tokenBalance : borrowBalanceAmount)
+                                                var tokenBalanceFixed = new BigNumber(tokenBalance).div(new BigNumber(10).pow(18))
+                                                console.log("repay", borrowBalanceAmount, parseFloat(tokenBalanceFixed.toString()), parseFloat(borrowBalanceAmount) > parseFloat(tokenBalanceFixed))
+                                                var value = formatDecimalsFixed(parseFloat(borrowBalanceAmount) > parseFloat(tokenBalanceFixed) ? parseFloat(tokenBalanceFixed) : parseFloat(borrowBalanceAmount), 8)
+                                                console.log("repay value", value)
+                                                setBorrowValue(value)
                                             }
                                         }}
                                     >
