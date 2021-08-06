@@ -596,12 +596,12 @@ const Pool = ({ t, router, lemdPrice, info, token, lToken, borrow, borrowLimit, 
                                                     value = new BigNumber(remainingValue).times(0.8)
                                                 }
                                                 console.log("borrowLimit",borrowLimit, "value", value,"remainingValue",remainingValue)
-                                                value = formatDecimalsFixed(value, 8)
+                                                value = formatDecimals(value, 8)
                                                 setBorrowValue(value)
                                             } else {
                                                 var tokenBalanceFixed = new BigNumber(tokenBalance).div(new BigNumber(10).pow(18))
                                                 console.log("repay", borrowBalanceAmount, parseFloat(tokenBalanceFixed.toString()), parseFloat(borrowBalanceAmount) > parseFloat(tokenBalanceFixed))
-                                                var value = formatDecimalsFixed(parseFloat(borrowBalanceAmount) > parseFloat(tokenBalanceFixed) ? parseFloat(tokenBalanceFixed) : parseFloat(borrowBalanceAmount), 8)
+                                                var value = formatDecimals(parseFloat(borrowBalanceAmount) > parseFloat(tokenBalanceFixed) ? parseFloat(tokenBalanceFixed) : parseFloat(borrowBalanceAmount), 8)
                                                 console.log("repay value", value)
                                                 setBorrowValue(value)
                                             }
