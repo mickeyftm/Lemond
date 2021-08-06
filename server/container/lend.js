@@ -203,8 +203,8 @@ export async function getLendInfoFromToken(tokenAbi, tokenAddress, lTokenAbi, lT
 
     const lemdSpeedPerBlock = new BigNumber(await lemdDistributionContract.methods.lemdSpeeds(lTokenAddress).call()).div(new BigNumber(10).pow(18)).times(lemdPrice)
     console.log("lemdSpeed", lemdSpeedPerBlock.toFixed())
-    const supplyRewardAPY = new BigNumber(lemdSpeedPerBlock).times(blocksPerDay).times(daysPerYear).times(lemdPrice).div(marketSize).times(100).toFixed(2)
-    const borrowRewardAPY = new BigNumber(lemdSpeedPerBlock).times(blocksPerDay).times(daysPerYear).times(lemdPrice).div(totalBorrow).times(100).toFixed(2)
+    const supplyRewardAPY = new BigNumber(lemdSpeedPerBlock).times(blocksPerDay).times(daysPerYear).div(marketSize).times(100).toFixed(2)
+    const borrowRewardAPY = new BigNumber(lemdSpeedPerBlock).times(blocksPerDay).times(daysPerYear).div(totalBorrow).times(100).toFixed(2)
     console.log("supplyRewardAPY", supplyRewardAPY)
     console.log("borrowRewardAPY", borrowRewardAPY)
     const totalSupplyAPY = parseFloat(supplyApy) + parseFloat(supplyRewardAPY == Infinity ? 0 : supplyRewardAPY)
